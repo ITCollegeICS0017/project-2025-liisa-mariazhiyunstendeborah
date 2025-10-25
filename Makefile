@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-g -Wall -Wextra -Werror -std=c++11 -Wno-unused-parameter
+CXXFLAGS=-g -Wall -Wextra -std=c++20 -Wno-unused-parameter
 SRC=$(wildcard src/*.cpp)
 OBJ=$(SRC:.cpp=.o)
 BIN=app
