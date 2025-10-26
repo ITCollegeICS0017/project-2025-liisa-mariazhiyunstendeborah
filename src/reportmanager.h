@@ -11,7 +11,7 @@ class ReportManager {
         int next_id = 1;
 
     public:
-			std::map<int, std::shared_ptr<ReportT>> reports;
+		std::map<int, std::shared_ptr<ReportT>> reports;
 
         ReportManager() = default;
         virtual ~ReportManager() = default;

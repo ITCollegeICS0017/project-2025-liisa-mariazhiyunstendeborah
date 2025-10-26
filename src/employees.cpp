@@ -28,6 +28,7 @@ void Photographer::switchOrderStatus(Order* changedorder, CompletionStatus compl
     }
 }
 
+//Todo: consumed_materials is unsynced w materials
 //some way to make this consumption automatically take an effect on the materials
 void Photographer::consumeMaterial(std::string mat_type, int quantity){
     consumed_materials[mat_type] += quantity;

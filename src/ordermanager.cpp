@@ -1,6 +1,5 @@
 #include "ordermanager.h"
 
-//pretys rue nothing in ordermanager needs defining
 
 Order* OrderManager::findOrder(int orderid) {
     auto iter = orders.find(orderid);

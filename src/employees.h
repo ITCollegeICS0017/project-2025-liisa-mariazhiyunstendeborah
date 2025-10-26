@@ -19,7 +19,7 @@ class Employee {
 
     public:
         Employee(OrderManager* order_manager) : order_manager(order_manager) { }
-
+//Todo: Add getEmpType() that returns the employee type in string (with capital letters correct)
         virtual ~Employee() = default;
 };
 

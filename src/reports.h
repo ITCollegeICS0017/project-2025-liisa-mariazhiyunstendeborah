@@ -9,7 +9,7 @@
 class Report {
     public:
         int creator_id;
-        std::chrono::year_month_day ymd;
+        std::chrono::year_month_day date_created;
 
         Report(int creator_id);
 

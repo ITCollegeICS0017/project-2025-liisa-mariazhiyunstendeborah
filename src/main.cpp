@@ -1,5 +1,6 @@
 #include "material.h"
 #include "client.h"
+#include "clientmanager.h"
 #include "employees.h"
 #include "order.h"
 #include "employeemanager.h"
@@ -13,10 +14,13 @@ int main() {
 	ReceptReportManager* receptreport_manager = new ReceptReportManager();
 	PhotoReportManager* photoreport_manager = new PhotoReportManager();
 	EmployeeManager* employee_manager = new EmployeeManager();
+	ClientManager* client_manager = new ClientManager();
 
 	Material material("paper", 20);
 	Material material1("film", 10);
 	auto client = std::make_shared<Client>("Bones Jones");
+	client_manager->addClient(client);
+
 	Service service = Photo_printing;
 	Service service2 = Film_devel;
 	int in_x_days = 3;
@@ -47,12 +51,28 @@ int main() {
 	photographer.consumeMaterial("film", 3);
 
 	int photoreportid = photographer.submitReport(photographer_id);
+
 	int receptreportid = receptionist.submitReport(receptionist_id);
+
 
 	std::cout << "Total revenue of completed orders: " << receptreport_manager->findReport(receptreportid)->total_revenue << "\n";
 
-	std::cout << "Consumed materials: ";
+	std::cout << "Consumed materials: " << "\n";
 	for (const auto& [mat_type, quantity] : photoreport_manager->findReport(photoreportid)->consumed_materials) {
-	    std::cout << "" << mat_type << ": " << quantity << "\n";
+	    std::cout << mat_type << ": " << quantity << "\n";
+	}
+
+	std::cout << "Receptionist reports that exist: " << "\n";
+   for (const auto& [reportid, reportPtr] : receptreport_manager->reports) {
+		std::cout << "Report ID: " << reportid << "\n";
+		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
+		std::cout << "Date created: " << reportPtr->date_created << "\n";
+   }
+
+	std::cout << "Photographer reports that exist: " << "\n";
+	for (const auto& [reportid, reportPtr] : photoreport_manager->reports) {
+		std::cout << "Report ID: " << reportid << "\n";
+		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
+		std::cout << "Date created: " << reportPtr->date_created << "\n";
 	}
 }

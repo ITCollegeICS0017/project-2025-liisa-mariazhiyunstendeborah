@@ -17,7 +17,7 @@ enum Service
 
 enum CompletionStatus
 {
-    Created ,
+    Created,
     Assigned,
     InProgress,
     Completed,
@@ -27,12 +27,12 @@ enum CompletionStatus
 class Order {
     public:
         std::shared_ptr<Client> client;
-        float price = 0.0f;
+        Service service;
         unsigned int in_x_days;
         CompletionStatus compl_status = Created;
-        Service service;
+        float price = 0.0f;
+        std::chrono::year_month_day date_created;
         int assigned_emp_id;
-        std::chrono::year_month_day ymd;
 
         Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days);
 
