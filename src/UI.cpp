@@ -3,6 +3,9 @@
 #include <map>
 #include <functional>
 #include <vector>
+#include <any>
+#include <limits>
+#include <type_traits>
 using namespace std;
 /*
 cmdParser is an easy custom solution to have UI be able to excecute commands without a lot of reusing the same code.
@@ -35,91 +38,176 @@ Views tree:
                         MarkMaterials
                     SubmitReport
 
-                    
+
         Exit
 
 
 */
-class cmdParser {
-    private:
-    string context; 
-    void addExit(){
-        commands["exit"] = []() {
-            cout << "you have exited" << endl;
-            return false;
-        };
-    }
+template <typename T>
+class IOhandler
+{
+private:
+    string context;
 
-    void run(string command){
-        commands.at(command)();
+public:
+    IOhandler()
+    {
+        context = "value of type " + string(typeid(T).name());
     }
-
-    public:
-    void addCommand(string s, function<void()> f) {
-        
-        commands[s] = f;
-
-    }
-    map<string,function<void()>> commands;
-
-    cmdParser(){
-        addExit();
-        context = "";
-    }
-    cmdParser(string ctxt){
-        addExit();
+    IOhandler(string ctxt)
+    {
         context = ctxt;
     }
 
-    void listCommands(){
-        cout << context<< endl;
+    T getInput()
+    {
+        bool correct_conversion = false;
+        T input;
+        do
+        {
+            cout << "Enter " << context << ": ";
+            cin >> input;
+            correct_conversion = true;
+            if (cin.fail())
+            {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
+                cout << "Invalid value type. Must be " << typeid(T).name() << endl;
+                correct_conversion = false;
+            }
+
+        } while (!correct_conversion);
+        cin.clear();
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
+        return input;
+    }
+};
+
+template <typename T>
+class cmdParser
+{
+private:
+    string context;
+    map<string, function<T()>> commands;
+
+    void addExit()
+    {
+        commands["exit"] = []()
+        {
+            cout << "you have exited" << endl;
+            if (is_void_v<T>)
+            {
+                return;
+            };
+            return T();
+        };
+    }
+
+    T run(string command)
+    {
+        return commands.at(command)();
+    }
+
+public:
+    void addCommand(string s, function<T()> f)
+    {
+
+        commands[s] = f;
+    }
+
+    cmdParser()
+    {
+        // addExit();
+        context = "";
+    }
+
+    cmdParser(string ctxt)
+    {
+        //  if(add_exit){addExit();}
+        context = ctxt;
+    }
+
+    void listCommands()
+    {
+        cout << context << endl;
         cout << "Possible commands: " << endl;
-        for (const auto& [key, value] : commands) {
+        for (const auto &[key, value] : commands)
+        {
             cout << " - " << key << '\n';
         }
     }
 
-    void loop(){
+    T loopCommands(bool add_exit = true)
+    {
+        if (add_exit)
+        {
+            addExit();
+        }
         bool looping = true;
-        while(looping){
+        while (looping)
+        {
             int i = 0;
             map<int, string> sesh;
             cout << context << endl;
-            for (const auto& [key, value] : commands) {
-                cout << "id: "<< i << " - " << key << '\n';
+            for (const auto &[key, value] : commands)
+            {
+                cout << "id: " << i << " - " << key << '\n';
                 sesh[i] = key;
                 i++;
             }
-            int x;
-            cout << "enter command id: ";
-            cin >> x;
+            int x = 0;
+            do
+            {
+                if (x > i)
+                {
+                    cout << "value must be smaller than: " << i << endl;
+                }
+                if (x < 0)
+                {
+                    cout << "value must not be negative" << endl;
+                }
+                x = IOhandler<int>("Command ID").getInput();
+
+            } while (x > i || x < 0);
+
             cout << "selected command: " << sesh.at(x) << endl;
-            if (sesh.at(x) == "exit"){
+            if (sesh.at(x) == "exit")
+            {
                 looping = false;
                 break;
             }
-            run(sesh.at(x));
+            else
+            {
+                run(sesh.at(x));
+            }
         }
     }
-    
-
-
 };
 
-void view_login(){
-    cmdParser parser("Log in view:");
-    parser.addCommand("list Users ", [](){return;});
-    parser.addCommand("login to user ", [](){return;});
-    parser.loop();    
+/*
+void view_login()
+{
+cmdParser<void> parser("Log in view:");
+parser.addCommand("list Users ", []()
+      { return; });
+parser.addCommand("login to user ", []()
+      { return; });
+parser.loopCommands();
 }
 
-int main(){
-    cmdParser parser("main screen: ");
-    parser.addCommand("login", [](){view_login();});
-    
-    parser.listCommands();
-    parser.addCommand("die",[](){cout << "die"<<endl;});
-    parser.listCommands();
-    parser.loop();
+int main()
+{
+string i = IOhandler<string>().getInput();
+cout << i << endl;
+cmdParser<void> parser("main screen: ");
+parser.addCommand("login", []()
+{ view_login(); });
 
+parser.listCommands();
+parser.addCommand("die", []()
+{ cout << "die" << endl; });
+parser.listCommands();
+parser.loopCommands();
 }
+
+*/
