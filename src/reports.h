@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 #include "order.h"
+#include "material.h"
 
 class Report {
     public:
@@ -30,12 +31,11 @@ class ReceptReport : public Report {
 
 class PhotoReport : public Report{
     public:
-        std::map<std::string, int> consumed_materials;
+//Todo: change this to copying a lot of Materials with changed stock quantites methinks
+        std::map<std::shared_ptr<Material>, int> consumed_materials;
         //I: date created
 
-        PhotoReport(int creator_id, const std::map<std::string, int>& consumed_materials) : Report(creator_id), consumed_materials(consumed_materials) { }
-
-        void addConsumedMaterial(std::string mat_type, int quantity);
+        PhotoReport(int creator_id, const std::map<std::shared_ptr<Material>, int>& consumed_materials) : Report(creator_id), consumed_materials(consumed_materials) { }
 };
 
 #endif

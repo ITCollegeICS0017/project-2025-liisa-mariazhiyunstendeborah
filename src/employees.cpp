@@ -28,41 +28,36 @@ void Photographer::switchOrderStatus(Order* changedorder, CompletionStatus compl
     }
 }
 
-//Todo: consumed_materials is unsynced w materials
-//some way to make this consumption automatically take an effect on the materials
-void Photographer::consumeMaterial(std::string mat_type, int quantity){
-    consumed_materials[mat_type] += quantity;
+void Photographer::consumeMaterial(std::shared_ptr<Material> material, int quantity){
+    if (!material_manager->findMaterialbyType(material->mat_type)) {
+        std::cout << "Material doesn't exist!";
+    } else {
+    material->stock_qty -= quantity;
+    material_manager->editMaterial(material);
+    consumed_materials[material] += quantity;
+    }
 }
 
-const std::map<std::string, int>& Photographer::getConsumedMaterials() {
+const std::map<std::shared_ptr<Material>, int>& Photographer::getConsumedMaterials() {
     return consumed_materials;
 }
 
 int Photographer::submitReport(int emp_id){
     auto report = std::make_shared<PhotoReport>(emp_id, consumed_materials);
-    //I: should consumed_materials be cleared after each
-    //submission?
     return photoreport_manager->addReport(report);
 }
 
-//These should likely be implemented higher up, or else here with a reporttostring function as reports do not need
-//to be private. To be implemented upon more knowledge of the consoleui.
-/*
-std::map<int, std::shared_ptr<ReceptReport>> Administrator::listReceptReports() {
-
-}
-
-std::map<int, std::shared_ptr<PhotoReport>> Administrator::listPhotoReports() {
-}
-*/
-
-std::map<std::string, std::shared_ptr<Material>> Administrator::listMaterials(){
+std::vector<std::shared_ptr<Material>> Administrator::listMaterials(){
     return material_manager->getMaterials();
 }
 
 void Administrator::addMaterial(std::string mat_type, int quantity){
-    auto material = std::make_shared<Material>(mat_type, quantity);
-    material_manager->addMaterial(mat_type, material);
+    Material* material = material_manager->findMaterialbyType(mat_type);
+    if (material != nullptr) {
+        material->stock_qty += quantity;
+        material_manager->editMaterial(std::shared_ptr<Material>(material));
+    }
+    material_manager->addMaterial(std::make_shared<Material>(mat_type, quantity));
 }
 
 void Administrator::removeMaterial(std::string mat_type){

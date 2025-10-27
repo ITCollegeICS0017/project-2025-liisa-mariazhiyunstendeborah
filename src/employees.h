@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <iostream>
 #include "order.h"
 #include "material.h"
 #include "reports.h"
@@ -19,7 +20,8 @@ class Employee {
 
     public:
         Employee(OrderManager* order_manager) : order_manager(order_manager) { }
-//Todo: Add getEmpType() that returns the employee type in string (with capital letters correct)
+//Todo: Add getEmpType() that returns the employee type in string (case-sensitive!)
+//Todo:
         virtual ~Employee() = default;
 };
 
@@ -42,25 +44,27 @@ class Receptionist: public Employee {
         int submitReport(int emp_id);
 };
 
+class MaterialManager;
 class PhotoReportManager;
 class Photographer: public Employee {
     private:
+        MaterialManager* material_manager;
         PhotoReportManager* photoreport_manager;
-        std::map<std::string, int> consumed_materials;
+        std::map<std::shared_ptr<Material>, int> consumed_materials;
 
     public:
-        Photographer(OrderManager* order_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager), photoreport_manager(photoreport_manager) { }
+        Photographer(OrderManager* order_manager, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager), material_manager(material_manager), photoreport_manager(photoreport_manager) { }
 
         void switchOrderStatus(Order* changedorder, CompletionStatus compl_status);
 
-        void consumeMaterial(std::string mat_type, int quantity);
+        void consumeMaterial(std::shared_ptr<Material> material, int quantity);
 
-        const std::map<std::string, int>& getConsumedMaterials();
+        const std::map<std::shared_ptr<Material>, int>& getConsumedMaterials();
 
         int submitReport(int emp_id);
 };
 
-class MaterialManager;
+
 class Administrator: public Employee {
     private:
         MaterialManager* material_manager;
@@ -74,7 +78,7 @@ class Administrator: public Employee {
 
     std::map<int, std::shared_ptr<PhotoReport>> listPhotoReports();
 
-    std::map<std::string, std::shared_ptr<Material>> listMaterials();
+    std::vector<std::shared_ptr<Material>> listMaterials();
 
     void addMaterial(std::string mat_type, int quantity);
 
