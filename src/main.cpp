@@ -21,6 +21,7 @@ int main() {
 	auto material1 = std::make_shared<Material>("film", 10);
 	material_manager->addMaterial(material);
 	material_manager->addMaterial(material1);
+	//Todo: Materials can be stored as literal materials, but the getMaterials can return a reference.
 	std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
 	std::cout << "Materials: \n";
 

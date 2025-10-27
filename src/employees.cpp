@@ -34,17 +34,26 @@ void Photographer::consumeMaterial(std::shared_ptr<Material> material, int quant
     } else {
     material->stock_qty -= quantity;
     material_manager->editMaterial(material);
-    consumed_materials[material] += quantity;
+    consumed_materials->addMaterial(material);
     }
 }
 
-const std::map<std::shared_ptr<Material>, int>& Photographer::getConsumedMaterials() {
-    return consumed_materials;
+std::map<std::shared_ptr<Material>, int> Photographer::getConsumedMaterials() {
+    std::map<std::shared_ptr<Material>, int> ret;
+    auto cons_mats = consumed_materials->getMaterials();
+    for (auto cons_mat : cons_mats) {
+        ret.insert({cons_mat, cons_mat->stock_qty});
+    }
+    return ret;
 }
 
 int Photographer::submitReport(int emp_id){
-    auto report = std::make_shared<PhotoReport>(emp_id, consumed_materials);
+    auto report = std::make_shared<PhotoReport>(emp_id, getConsumedMaterials());
     return photoreport_manager->addReport(report);
+}
+
+Photographer::~Photographer() {
+    delete this->consumed_materials;
 }
 
 std::vector<std::shared_ptr<Material>> Administrator::listMaterials(){

@@ -35,7 +35,7 @@ class PhotoReport : public Report{
         std::map<std::shared_ptr<Material>, int> consumed_materials;
         //I: date created
 
-        PhotoReport(int creator_id, const std::map<std::shared_ptr<Material>, int>& consumed_materials) : Report(creator_id), consumed_materials(consumed_materials) { }
+        PhotoReport(int creator_id, std::map<std::shared_ptr<Material>, int> consumed_materials) : Report(creator_id), consumed_materials(consumed_materials) { }
 };
 
 #endif

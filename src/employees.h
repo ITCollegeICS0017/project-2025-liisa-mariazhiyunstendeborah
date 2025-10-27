@@ -50,18 +50,23 @@ class Photographer: public Employee {
     private:
         MaterialManager* material_manager;
         PhotoReportManager* photoreport_manager;
-        std::map<std::shared_ptr<Material>, int> consumed_materials;
+        // std::map<std::shared_ptr<Material>, int> consumed_materials;
+        MaterialManager* consumed_materials;
 
     public:
-        Photographer(OrderManager* order_manager, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager), material_manager(material_manager), photoreport_manager(photoreport_manager) { }
+        Photographer(OrderManager* order_manager, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager), material_manager(material_manager), photoreport_manager(photoreport_manager) {
+            this->consumed_materials = new MaterialManager();
+ }
 
         void switchOrderStatus(Order* changedorder, CompletionStatus compl_status);
 
         void consumeMaterial(std::shared_ptr<Material> material, int quantity);
 
-        const std::map<std::shared_ptr<Material>, int>& getConsumedMaterials();
+        std::map<std::shared_ptr<Material>, int> getConsumedMaterials();
 
         int submitReport(int emp_id);
+
+        ~Photographer() override;
 };
 
 
