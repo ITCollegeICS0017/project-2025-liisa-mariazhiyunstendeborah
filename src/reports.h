@@ -31,9 +31,7 @@ class ReceptReport : public Report {
 
 class PhotoReport : public Report{
     public:
-//Todo: change this to copying a lot of Materials with changed stock quantites methinks
         std::map<std::shared_ptr<Material>, int> consumed_materials;
-        //I: date created
 
         PhotoReport(int creator_id, std::map<std::shared_ptr<Material>, int> consumed_materials) : Report(creator_id), consumed_materials(consumed_materials) { }
 };

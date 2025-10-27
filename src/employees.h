@@ -21,7 +21,7 @@ class Employee {
     public:
         Employee(OrderManager* order_manager) : order_manager(order_manager) { }
 //Todo: Add getEmpType() that returns the employee type in string (case-sensitive!)
-//Todo:
+//Todo: Add Employee name
         virtual ~Employee() = default;
 };
 
@@ -50,7 +50,6 @@ class Photographer: public Employee {
     private:
         MaterialManager* material_manager;
         PhotoReportManager* photoreport_manager;
-        // std::map<std::shared_ptr<Material>, int> consumed_materials;
         MaterialManager* consumed_materials;
 
     public:

@@ -12,8 +12,6 @@ class Material{
         Material(std::string mat_type, int stock_qty) : mat_type(mat_type), stock_qty(stock_qty) { }
 
         virtual ~Material() = default;
-
-        void ConsumeMaterial(int quantity);
 };
 
 #endif

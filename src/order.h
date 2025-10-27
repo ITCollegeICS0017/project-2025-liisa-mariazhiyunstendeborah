@@ -5,7 +5,7 @@
 #include <chrono>
 #include "client.h"
 
-
+//Todo: some way of changing/setting the below variables
 constexpr int pay_per_day = 1400;
 constexpr double expr_surcharge = 1.25;
 

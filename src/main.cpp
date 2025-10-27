@@ -10,6 +10,7 @@
 int main() {
 //example implementation, create Material, Order, Receptionist, Photographer, Administrator, assignOrder,
 //switchOrderStatus, consumeMaterial, submit ReceptReport, submit PhotoReport, listMaterials
+//Todo: Add Administrator example implementation
 	OrderManager* order_manager = new OrderManager();
 	ReceptReportManager* receptreport_manager = new ReceptReportManager();
 	PhotoReportManager* photoreport_manager = new PhotoReportManager();
@@ -21,7 +22,7 @@ int main() {
 	auto material1 = std::make_shared<Material>("film", 10);
 	material_manager->addMaterial(material);
 	material_manager->addMaterial(material1);
-	//Todo: Materials can be stored as literal materials, but the getMaterials can return a reference.
+
 	std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
 	std::cout << "Materials: \n";
 
