@@ -4,19 +4,20 @@
 #include "employees.h"
 #include "order.h"
 #include "employeemanager.h"
-
+#include "uimanager.h"
 #include <iostream>
 
 int main() {
-//example implementation, create Material, Order, Receptionist, Photographer, Administrator, assignOrder,
-//switchOrderStatus, consumeMaterial, submit ReceptReport, submit PhotoReport, listMaterials
-//Todo: Add employee names and removing materials, employees, reports implementation
+	//example implementation, create Material, Order, Receptionist, Photographer, Administrator, assignOrder,
+	//switchOrderStatus, consumeMaterial, submit ReceptReport, submit PhotoReport, listMaterials
+	//Todo: Add employee names and removing materials, employees, reports implementation
 	OrderManager* order_manager = new OrderManager();
 	ReceptReportManager* receptreport_manager = new ReceptReportManager();
 	PhotoReportManager* photoreport_manager = new PhotoReportManager();
 	EmployeeManager* employee_manager = new EmployeeManager();
 	MaterialManager* material_manager = new MaterialManager();
 	ClientManager* client_manager = new ClientManager();
+	UImanager* uimanager = new UImanager(order_manager, client_manager, employee_manager, photoreport_manager, receptreport_manager, material_manager);
 
 	auto material = std::make_shared<Material>("paper", 20);
 	auto material1 = std::make_shared<Material>("film", 10);
@@ -126,4 +127,6 @@ int main() {
 		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
 		std::cout << "Date created: " << reportPtr->date_created << "\n";
 	}
+
+    uimanager->view_main();
 }
