@@ -83,7 +83,7 @@ public:
             cout << " - " << key << '\n';
         }
     }
-    T valuefromCommand(T defaultVal){
+    T valueFromCommand(T defaultVal){
         T returnVal = defaultVal;
         while (true)
         {
@@ -94,20 +94,21 @@ public:
             sesh[0] = "exit";
 
             cout << context << endl;
-            cout << "enter 0 to select: "<< returnVal <<endl << endl;
-            cout << "select value from: ";
+            cout << "enter 0 to exit with: "<< returnVal <<endl << endl;
+            cout << "select value from: \n";
             for (const auto &[key, value] : commands)
             {
-                cout << "id: " << i << " - " << key << '\n';
+                cout << "[" << i << "] - " << key << '\n';
                 sesh[i] = key;
                 i++;
             }
+            i--;
             int x = 0;
             do
             {
                 if (x > i)
                 {
-                    cout << "value must be smaller than: " << i << endl;
+                    cout << "number must be between 0 and " << i << endl;
                 }
                 if (x < 0)
                 {
@@ -117,7 +118,7 @@ public:
 
             } while (x > i || x < 0);
 
-            cout << "selected command: " << sesh.at(x) << endl;
+            cout << "selected value: " << sesh.at(x) << endl;
             if (sesh.at(x) == "exit")
             {
                 return returnVal;
@@ -164,7 +165,7 @@ public:
 
             } while (x > i || x < 0);
 
-            cout << "selected command: " << sesh.at(x) << endl;
+            cout << "selected command: " << sesh.at(x) << "\n\n";
             if (sesh.at(x) == "exit")
             {
                 looping = false;

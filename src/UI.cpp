@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "order.h"
 
 /*
 cmdParser is an easy custom solution to have UI be able to excecute commands without a lot of reusing the same code.
@@ -38,3 +39,5 @@ template class cmdParser<int>;
 template class cmdParser<string>;
 template class cmdParser<float>;
 template class cmdParser<char>;
+template class cmdParser<CompletionStatus>;
+template class cmdParser<Service>;

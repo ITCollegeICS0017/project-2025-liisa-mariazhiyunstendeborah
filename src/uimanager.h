@@ -8,10 +8,22 @@
 #include "reportmanager.h"
 #include "materialmanager.h"
 
+#include <format>
 #include <functional>
 #include <string>
+#include <chrono>
 
 //	UImanager* uimanager = new UImanager(order_manager, client_manager, employee_manager, photoreport_manager, receptreport_manager, material_manager);
+
+/*
+enum CompletionStatus
+{
+    Created,
+    Assigned,
+    InProgress,
+    Completed,
+};
+*/
 
 class UImanager
 {
@@ -22,7 +34,8 @@ private:
     EmployeeManager *employee_manager;
     MaterialManager *material_manager;
     ClientManager *client_manager;
-    public:
+
+public:
     Employee *CurrentUser;
     int emp_id;
     UImanager(OrderManager *omanager, ClientManager *climanager, EmployeeManager *empmanager, PhotoReportManager *prepmanager, ReceptReportManager *repmanager, MaterialManager *matmanager)
@@ -34,41 +47,86 @@ private:
         material_manager = matmanager;
         client_manager = climanager;
     }
-    string curr_username(){
-        if(CurrentUser == nullptr){
+    string curr_username()
+    {
+        if (CurrentUser == nullptr)
+        {
             return "not logged in";
         }
-        else {
+        else
+        {
             return CurrentUser->emp_name;
         }
     }
-    string viewContextBase(string viewContext = ""){
+    string viewContextBase(string viewContext = "")
+    {
         string view = "\n\n";
         view += "User: " + curr_username() + "\n";
         view += viewContext + "\n";
         view += "\n";
         return view;
     }
-    void list_users()
-    {
-        map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
-        std::cout << "Employees: \n";
-        for (auto const &[key, val] : employees)
+    string dispCompStatus(CompletionStatus stat){
+
+        switch (stat)
         {
-            std::cout << "Employee ID: " << key << " Employee Name: " << val->emp_name << endl;
+        case CompletionStatus::Created:
+            return "Created";
+
+            /* code */
+            break;
+        case CompletionStatus::Assigned:
+            return "Assigned";
+            /* code */
+            break;
+        case CompletionStatus::InProgress:
+            return "In Progress";
+
+            /* code */
+            break;
+        case CompletionStatus::Completed:
+            return "Completed";
+
+            /* code */
+            break;
+
+        default:
+            return "unknown status";
+            break;
         }
-        std::cout << "\n";
-        return;
     }
-    
-    
+    string dispService(Service serv)
+    {
+
+        switch (serv)
+        {
+        case Service::Photo_printing:
+            return "Photo Printing";
+
+            /* code */
+            break;
+        case Service::Film_devel:
+            return "Develop Film";
+            /* code */
+            break;
+
+        default:
+            return "unknown status";
+            break;
+        }
+    }
+    string chrono_to_string(std::chrono::year_month_day ymd)
+    {
+        std::string s = std::format("{:%Y-%m-%d}", std::chrono::sys_days{ymd});
+        return s;
+    }
     void view_login()
     {
         map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
 
         cmdParser<int> userParser;
         userParser.setContext(viewContextBase("Choose login method"));
-        userParser.addCommand("Using id", [this,&userParser]()
+        userParser.addCommand("Using id", [this, &userParser]()
                               {
             list_users();
             bool id_in_range = false;
@@ -79,7 +137,7 @@ private:
                   try
                     {
                 CurrentUser = employee_manager->findEmployee(id);
-                if (CurrentUser != NULL){
+                if (CurrentUser != nullptr){
                     id_in_range = true; 
                     emp_id = id; 
                     userParser.setContext(viewContextBase("Choose login method"));
@@ -100,8 +158,8 @@ private:
             
             return 0; });
 
-        userParser.addCommand("Using name", [this,&userParser]()
-            { 
+        userParser.addCommand("Using name", [this, &userParser]()
+                              { 
             map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
             bool logged_in = false;
             while(!logged_in){
@@ -114,7 +172,7 @@ private:
                             try
                             {
                             CurrentUser = employee_manager->findEmployee(key);
-                            if (CurrentUser != NULL){
+                            if (CurrentUser != nullptr){
                                 logged_in = true;
                                 emp_id = key;
                                 userParser.setContext(viewContextBase("Choose login method"));
@@ -132,53 +190,231 @@ private:
             }
 
                 return 0; });
-    userParser.loopCommands();
+        userParser.loopCommands();
     }
-    void view_order(){
 
+    void list_users()
+    {
+        map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+        std::cout << "Employees: \n";
+        for (auto const &[key, val] : employees)
+        {
+            std::cout << "Employee ID: " << key << " Name: " << val->emp_name << " | Role:  " << val->getEmpType() << endl;
+        }
+        std::cout << "\n";
+        return;
     }
-    void list_orders(){
+    string get_order(int id)
+    {
+        Order *order = order_manager->findOrder(id);
+        string orderstr = "";
+        if (order == nullptr)
+        {
+            std::cout << "order not found\n";
 
-    }    
-    void emp_orders_id(){
+            return orderstr;
+        }
+        string name = order->client->client_name;
+        string date = chrono_to_string(order->date_created);
+        string comp = dispCompStatus(order->compl_status);
+        string service = dispService(order->service);
+        string indays = to_string(order->in_x_days);
+        string price = to_string(order->priceCalc(order->in_x_days));
+        orderstr += "\nID: " + to_string(id) + " Client: " + name + "\n";
+        orderstr += "Date created: " + date + "\n";
+        orderstr += "Status: " + comp + "\n";
 
+        if (order->assigned_emp_id > 0)
+        {
+            orderstr += "Assigned Employee id: " + to_string(order->assigned_emp_id) + "\n";
+        }
+        else
+        {
+            orderstr += "No assigned employee\n";
+        }
+        orderstr += "Service: " + service + "\n";
+        orderstr += "To be done in: " + indays + "days\n";
+        orderstr += "Price: " + price + "€\n";
+        orderstr += "\n";
+        return orderstr;
     }
-    void list_assigned_orders(){
+    bool id_valid_order(int id)
+    {
+        Order *order = order_manager->findOrder(id);
+        if (order != nullptr)
+        {
+            return true;
+        }
+        return false;
     }
-    void view_Photographer(){
-        std::cout << "Role: Photographer\n\n"; 
+    bool id_valid_user(int id)
+    {
+        Employee *emp = employee_manager->findEmployee(id);
+        if (emp != nullptr)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void list_orders()
+    {
+        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::cout << "Orders: \n";
+        for (auto const &[key, val] : orders)
+        {
+            std::cout << "\nID: " << key << " Client: " << val->client->client_name << endl;
+            std::cout << "Date created: " << val->date_created << "\n";
+            std::cout << "Status: " << dispCompStatus(val->compl_status) << "\n";
+            std::cout << "Date created: " << val->date_created << "\n";
+
+            int tmpint = val->assigned_emp_id;
+            if (val->assigned_emp_id > 0)
+            {
+                std::cout << "Assigned Employee id: " << tmpint << "\n";
+            }
+            else
+            {
+                std::cout << "No assigned employee\n";
+            }
+        }
+    }
+    void emp_orders_id(int id)
+    {
+        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::cout << "Orders: \n";
+        for (auto const &[key, val] : orders)
+        {
+            if (val->assigned_emp_id == id)
+            {
+                std::cout << get_order(key);
+            }
+        }
+    }
+    int useridByName(string name)
+    {
+        map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+        for (auto const &[key, val] : employees)
+        {
+            if ((string)val->emp_name == name)
+            {
+                return key;
+            }
+        }
+        return -1;
+    }
+
+    void view_Photographer()
+    {
+        std::cout << "Role: Photographer\n\n";
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Photographer actions:"));
-
+        parser.addCommand("View my assigned orders", [this]()
+                          {emp_orders_id(emp_id); return 1; });
+        parser.loopCommands();
     }
-    void view_Administrator(){
-        std::cout << "Role: Administrator\n\n"; 
+    void view_order_edit_rec(int id)
+    {
+        cmdParser<int> parser;
+        Order *order = order_manager->findOrder(id);
+        function<void()> updateheader = [this, id, &parser]()
+        {
+            string header = "editing order [" + to_string(id) + "]";
+            header += get_order(id);
+            parser.setContext(viewContextBase(header));
+            return;
+        };
+        updateheader();
+        parser.addCommand("Assign Photographer", [this, &order, updateheader]()
+                          {
+            IOhandler<int> inthandler("Enter Photographer ID");
+            cmdParser<int> Photographers;
+            Photographers.setContext("choose a photographer");
+            map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+            for (auto const &[key, val] : employees)
+                {
+                    if( (string)val->getEmpType() == "Photographer"){
+                        string kstring = string(to_string(key));
+                        Photographers.addCommand(((val->emp_name) + " - id: " + kstring),[key](){return key;});                            
+                        order->compl_status = CompletionStatus::Assigned;
+                    }
+                }
+            int pid = Photographers.valueFromCommand(-1);
+
+            if (pid != -1){
+                dynamic_cast<Receptionist*>(CurrentUser)->assignOrder(order,pid);
+            }
+            updateheader();
+            return 1; });
+        parser.addCommand("Edit Status",[&order,updateheader](){
+            cmdParser<CompletionStatus> statParser;
+            statParser.setContext("Select Status");
+            statParser.addCommand("Assigned",[](){return CompletionStatus::Assigned;});
+            statParser.addCommand("In Progress",[](){return CompletionStatus::InProgress;});
+            statParser.addCommand("Completed",[](){return CompletionStatus::Completed;});
+            order->compl_status = statParser.valueFromCommand(CompletionStatus::Assigned);
+            updateheader(); 
+            return 1;});
+
+        parser.loopCommands();
+    }
+    void view_Administrator()
+    {
+        std::cout << "Role: Administrator\n\n";
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Administrator actions:"));
-
     }
-    void view_Receptionist(){
-        std::cout << "Role: Receptionist\n\n"; 
+    void view_Receptionist()
+    {
+        std::cout << "Role: Receptionist\n\n";
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Receptionist actions:"));
-        parser.addCommand("list orders", [](){return 1;});
-        parser.addCommand("assign order to employee", [](){return 1;});
-        parser.addCommand("list orders", [](){return 1;});
-        parser.addCommand("list orders", [](){return 1;});
-        parser.addCommand("list orders", [](){return 1;});
+        parser.addCommand("list orders", [this]()
+                          {list_orders();return 1; });
+        // parser.addCommand("assign order to employee", [this](){return 1;});
+        parser.addCommand("View order", [this]()
+                          {
+            IOhandler<int> inthandler("order id: ");
+            bool correct_id= false;
+            int id;
+            do{
+                    list_orders();
+                    id = inthandler.getInput();
+                    correct_id = id_valid_order(id);
+                } while(!correct_id);
+                std::cout << get_order(id);
+                return 1; });
+        parser.addCommand("Edit Order", [this]()
+                          {
+            list_orders();
+            IOhandler<int> inthandler("Order id");
+            int id;
+            id = inthandler.getInput();
+            bool valid = id_valid_order(id);
+            while(!valid){
+                std::cout << "Invalid Order ID\n";
+                id = inthandler.getInput();
+                valid = id_valid_order(id);
+            
+            }
+            view_order_edit_rec(id);
+             return 1; });
+
         parser.loopCommands();
     }
 
-    void view_emp_commands(){
-        if(CurrentUser == NULL){
-            std::cout<< "Not logged in";
+    void view_emp_commands()
+    {
+        if (CurrentUser == NULL)
+        {
+            std::cout << "Not logged in";
             return;
         }
 
-        std::cout << "\n\nWelcome " << curr_username()<< "\nEmployee id: " << emp_id << "\n\n";
+        std::cout << "\n\nWelcome " << curr_username() << "\nEmployee id: " << emp_id << "\n\n";
 
         string usertype = CurrentUser->getEmpType();
-        
+
         if (usertype == "Photographer")
         {
             view_Photographer();
@@ -193,22 +429,21 @@ private:
         }
         else
         {
-           std::cout << "Unknown user type, exiting.\n\n";
+            std::cout << "Unknown user type, exiting.\n\n";
         }
         return;
-
     }
     int view_main()
     {
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Photo Studio Main"));
-        //parser.setContext("Photography Studio main view\n"+ curr_username());
-        // function lusers = [this](){view_list_users();};
+        // parser.setContext("Photography Studio main view\n"+ curr_username());
+        //  function lusers = [this](){view_list_users();};
         parser.addCommand("List Users", [this]()
                           {
             list_users();
             return 1; });
-        parser.addCommand("Login", [this,&parser]()
+        parser.addCommand("Login", [this, &parser]()
                           {
                             view_login();
                             parser.setContext(viewContextBase("Photo Studio Main"));
