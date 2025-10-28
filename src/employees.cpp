@@ -1,5 +1,9 @@
 #include "employees.h"
 
+std::string Receptionist::getEmpType() {
+    return "Receptionist";
+}
+
 int Receptionist::makeOrder(std::shared_ptr<Client> client, Service service, unsigned int in_x_days) {
     auto order = std::make_shared<Order>(client, service, in_x_days);
     return order_manager->addOrder(order);
@@ -18,6 +22,10 @@ int Receptionist::submitReport(int emp_id){
     auto total_profits = order_manager->calculateProfits(completed_orders);
     auto receptreport = std::make_shared<ReceptReport>(emp_id, completed_orders, total_profits);
     return receptreport_manager->addReport(receptreport);
+}
+
+std::string Photographer::getEmpType() {
+    return "Photographer";
 }
 
 void Photographer::switchOrderStatus(Order* changedorder, CompletionStatus compl_status){
@@ -56,17 +64,29 @@ Photographer::~Photographer() {
     delete this->consumed_materials;
 }
 
+std::string Administrator::getEmpType() {
+    return "Administrator";
+}
+
+std::map<int, std::shared_ptr<ReceptReport>> Administrator::listReceptReports() {
+    return receptreport_manager->reports;
+}
+
+std::map<int, std::shared_ptr<PhotoReport>> Administrator::listPhotoReports() {
+    return photoreport_manager->reports;
+}
+
 std::vector<std::shared_ptr<Material>> Administrator::listMaterials(){
     return material_manager->getMaterials();
 }
 
-void Administrator::addMaterial(std::string mat_type, int quantity){
-    Material* material = material_manager->findMaterialbyType(mat_type);
-    if (material != nullptr) {
+void Administrator::addMaterial(std::shared_ptr<Material> material, int quantity){
+    auto mat = material_manager->findMaterialbyType(material->mat_type);
+    if (mat != nullptr) {
         material->stock_qty += quantity;
         material_manager->editMaterial(std::shared_ptr<Material>(material));
     }
-    material_manager->addMaterial(std::make_shared<Material>(mat_type, quantity));
+    material_manager->addMaterial(std::make_shared<Material>(material, quantity));
 }
 
 void Administrator::removeMaterial(std::string mat_type){
