@@ -1,6 +1,7 @@
 #ifndef CLIENTMANAGER_H
 #define CLIENTMANAGER_H
 
+#include <stdexcept>
 #include <map>
 #include <memory>
 #include "client.h"

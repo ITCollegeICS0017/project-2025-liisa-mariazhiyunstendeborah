@@ -11,14 +11,19 @@
 #include "ordermanager.h"
 #include "reportmanager.h"
 #include "materialmanager.h"
+#include "clocks.h"
+#include "employeemanager.h"
 
 class OrderManager;
+class IClock;
+class EmployeeManager;
 
 class Employee {
     protected:
         OrderManager* order_manager;
 
     public:
+        int emp_id = 0;
         std::string emp_name;
 
         Employee(OrderManager* order_manager, std::string emp_name) : order_manager(order_manager), emp_name(emp_name) { }
@@ -35,10 +40,11 @@ class Employee {
 class ReceptReportManager;
 class Receptionist: public Employee {
     private:
+        IClock& clock;
         ReceptReportManager* receptreport_manager;
 
     public:
-        Receptionist(OrderManager* order_manager, std::string emp_name, ReceptReportManager* receptreport_manager) : Employee(order_manager, emp_name), receptreport_manager(receptreport_manager) { }
+        Receptionist(OrderManager* order_manager, std::string emp_name, IClock& clock, ReceptReportManager* receptreport_manager) : Employee(order_manager, emp_name), clock(clock), receptreport_manager(receptreport_manager) { }
 
         std::string getEmpType();
 
@@ -46,19 +52,20 @@ class Receptionist: public Employee {
 
         void assignOrder(Order* assign, int emp_id);
 
-        int submitReport(int emp_id);
+        int submitReport();
 };
 
 class MaterialManager;
 class PhotoReportManager;
 class Photographer: public Employee {
     private:
+        IClock& clock;
         MaterialManager* material_manager;
         PhotoReportManager* photoreport_manager;
         MaterialManager* consumed_materials;
 
     public:
-        Photographer(OrderManager* order_manager, std::string emp_name, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), material_manager(material_manager), photoreport_manager(photoreport_manager) {
+        Photographer(OrderManager* order_manager, std::string emp_name, IClock& clock, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), clock(clock), material_manager(material_manager), photoreport_manager(photoreport_manager) {
             this->consumed_materials = new MaterialManager();
  }
 
@@ -66,11 +73,11 @@ class Photographer: public Employee {
 
         void switchOrderStatus(Order* changedorder, CompletionStatus compl_status);
 
-        void consumeMaterial(std::shared_ptr<Material> material, int quantity);
+        void consumeMaterial(std::string mat_type, unsigned int quantity);
 
         std::map<std::shared_ptr<Material>, int> getConsumedMaterials();
 
-        int submitReport(int emp_id);
+        int submitReport();
 
         ~Photographer() override;
 };
@@ -93,7 +100,7 @@ class Administrator: public Employee {
 
         std::vector<std::shared_ptr<Material>> listMaterials();
 
-        void addMaterial(std::shared_ptr<Material> material, int quantity);
+        void addMaterial(std::shared_ptr<Material> material, unsigned int quantity);
 
         void removeMaterial(std::string mat_type);
 };
