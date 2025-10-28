@@ -84,9 +84,10 @@ void Administrator::addMaterial(std::shared_ptr<Material> material, int quantity
     auto mat = material_manager->findMaterialbyType(material->mat_type);
     if (mat != nullptr) {
         material->stock_qty += quantity;
-        material_manager->editMaterial(std::shared_ptr<Material>(material));
+        material_manager->editMaterial(material);
     }
-    material_manager->addMaterial(std::make_shared<Material>(material, quantity));
+    material->stock_qty = quantity;
+    material_manager->addMaterial(material);
 }
 
 void Administrator::removeMaterial(std::string mat_type){
