@@ -20,8 +20,13 @@ int main() {
 
 	auto material = std::make_shared<Material>("paper", 20);
 	auto material1 = std::make_shared<Material>("film", 10);
-	material_manager->addMaterial(material);
-	material_manager->addMaterial(material1);
+	auto admin = std::make_shared<Administrator>(order_manager, material_manager, receptreport_manager, photoreport_manager);
+	int admin_id = employee_manager->addEmployee(admin);
+	std::cout << "Made administrator with employee id: " << admin_id << "\n";
+
+	admin->addMaterial(material, 10);
+	admin->addMaterial(material, 10);
+	admin->addMaterial(material1, 10);
 
 	std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
 	std::cout << "Materials: \n";
@@ -52,8 +57,17 @@ int main() {
 	if (!order1) {
 		std::cerr << "Order not found!" << std::endl;
 	}
+
+	std::map<int, std::shared_ptr<Order>> orders =  order_manager->getOrders();
+	std::cout << "Current orders: " << "\n";
+
+	for (auto order : orders) {
+	std::cout << "Orderid: " << order.first << ", Client's name: " << order.second->client->client_name << ", date created: " << order.second->date_created;
+	}
+
 	std::cout << "Price of first order(" << orderid << "): " << order->price << "\n";
 	std::cout << "Price of second order(" << orderid1 << "): " << order1->price << "\n";
+
 
 	auto photographer = std::make_shared<Photographer>(order_manager, material_manager, photoreport_manager);
 	int photographer_id = employee_manager->addEmployee(photographer);
@@ -88,14 +102,14 @@ int main() {
 	}
 
 	std::cout << "Receptionist reports that exist: " << "\n";
-   for (const auto& [reportid, reportPtr] : receptreport_manager->reports) {
+   for (const auto& [reportid, reportPtr] : admin->listReceptReports()) {
 		std::cout << "Report ID: " << reportid << "\n";
 		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
 		std::cout << "Date created: " << reportPtr->date_created << "\n";
    }
 
 	std::cout << "Photographer reports that exist: " << "\n";
-	for (const auto& [reportid, reportPtr] : photoreport_manager->reports) {
+	for (const auto& [reportid, reportPtr] : admin->listPhotoReports()) {
 		std::cout << "Report ID: " << reportid << "\n";
 		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
 		std::cout << "Date created: " << reportPtr->date_created << "\n";
