@@ -11,14 +11,17 @@
 #include "ordermanager.h"
 #include "reportmanager.h"
 #include "materialmanager.h"
+#include "clocks.h"
 
 class OrderManager;
+class IClock;
 
 class Employee {
     protected:
         OrderManager* order_manager;
 
     public:
+        int emp_id;
         std::string emp_name;
 
         Employee(OrderManager* order_manager, std::string emp_name) : order_manager(order_manager), emp_name(emp_name) { }
@@ -35,10 +38,11 @@ class Employee {
 class ReceptReportManager;
 class Receptionist: public Employee {
     private:
+        IClock& clock;
         ReceptReportManager* receptreport_manager;
 
     public:
-        Receptionist(OrderManager* order_manager, std::string emp_name, ReceptReportManager* receptreport_manager) : Employee(order_manager, emp_name), receptreport_manager(receptreport_manager) { }
+        Receptionist(OrderManager* order_manager, std::string emp_name, IClock& clock, ReceptReportManager* receptreport_manager) : Employee(order_manager, emp_name), clock(clock), receptreport_manager(receptreport_manager) { }
 
         std::string getEmpType();
 
@@ -53,12 +57,13 @@ class MaterialManager;
 class PhotoReportManager;
 class Photographer: public Employee {
     private:
+        IClock& clock;
         MaterialManager* material_manager;
         PhotoReportManager* photoreport_manager;
         MaterialManager* consumed_materials;
 
     public:
-        Photographer(OrderManager* order_manager, std::string emp_name, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), material_manager(material_manager), photoreport_manager(photoreport_manager) {
+        Photographer(OrderManager* order_manager, std::string emp_name, IClock& clock, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), clock(clock), material_manager(material_manager), photoreport_manager(photoreport_manager) {
             this->consumed_materials = new MaterialManager();
  }
 

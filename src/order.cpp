@@ -1,7 +1,7 @@
 #include "order.h"
 
-Order::Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days) : client(client), service(service), in_x_days(in_x_days) {
-    auto now = std::chrono::system_clock::now();
+Order::Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, IClock& clock) : client(client), service(service), in_x_days(in_x_days), clock(clock) {
+    auto now = clock.now();
     date_created = std::chrono::floor<std::chrono::days>(now);
     price = priceCalc(in_x_days);
 }

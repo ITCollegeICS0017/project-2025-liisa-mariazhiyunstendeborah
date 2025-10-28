@@ -5,7 +5,7 @@ std::string Receptionist::getEmpType() {
 }
 
 int Receptionist::makeOrder(std::shared_ptr<Client> client, Service service, unsigned int in_x_days) {
-    auto order = std::make_shared<Order>(client, service, in_x_days);
+    auto order = std::make_shared<Order>(client, service, in_x_days, clock);
     return order_manager->addOrder(order);
 }
 
@@ -20,7 +20,7 @@ void Receptionist::assignOrder(Order* assign, int emp_id){
 int Receptionist::submitReport(int emp_id){
     auto completed_orders = order_manager->getCompletedOrders();
     auto total_profits = order_manager->calculateProfits(completed_orders);
-    auto receptreport = std::make_shared<ReceptReport>(emp_id, completed_orders, total_profits);
+    auto receptreport = std::make_shared<ReceptReport>(emp_id, clock, completed_orders, total_profits);
     return receptreport_manager->addReport(receptreport);
 }
 
@@ -58,7 +58,7 @@ std::map<std::shared_ptr<Material>, int> Photographer::getConsumedMaterials() {
 }
 
 int Photographer::submitReport(int emp_id){
-    auto report = std::make_shared<PhotoReport>(emp_id, getConsumedMaterials());
+    auto report = std::make_shared<PhotoReport>(emp_id, clock, getConsumedMaterials());
     return photoreport_manager->addReport(report);
 }
 

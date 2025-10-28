@@ -37,6 +37,7 @@ float OrderManager::calculateProfits(const std::map<int, std::shared_ptr<Order>>
 
 int OrderManager::addOrder(std::shared_ptr<Order> order)  {
     int orderid = next_id++;
+    order->orderid = orderid;
     orders.insert({orderid, order});
     return orderid;
 }

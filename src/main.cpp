@@ -4,6 +4,7 @@
 #include "employees.h"
 #include "order.h"
 #include "employeemanager.h"
+#include "clocks.h"
 
 #include <iostream>
 
@@ -11,6 +12,7 @@ int main() {
 //example implementation, create Material, Order, Receptionist, Photographer, Administrator, assignOrder,
 //switchOrderStatus, consumeMaterial, submit ReceptReport, submit PhotoReport, listMaterials
 
+	SystemClock clock;
 	OrderManager* order_manager = new OrderManager();
 	ReceptReportManager* receptreport_manager = new ReceptReportManager();
 	PhotoReportManager* photoreport_manager = new PhotoReportManager();
@@ -53,11 +55,11 @@ int main() {
 	Service service2 = Film_devel;
 	int in_x_days = 3;
 
-	auto receptionist = std::make_shared<Receptionist>(order_manager, "Schmongler", receptreport_manager);
+	auto receptionist = std::make_shared<Receptionist>(order_manager, "Schmongler", clock, receptreport_manager);
 	int receptionist_id = employee_manager->addEmployee(receptionist);
 	std::cout << "Made receptionist with employee id: " << receptionist_id << "\n";
 
-	auto badreceptionist = std::make_shared<Receptionist>(order_manager, "Terrible Receptionist", receptreport_manager);
+	auto badreceptionist = std::make_shared<Receptionist>(order_manager, "Terrible Receptionist", clock, receptreport_manager);
 	int badreceptionist_id = employee_manager->addEmployee(badreceptionist);
 	std::cout << "Made bad receptionist with employee id: " << badreceptionist_id << "\n";
 
@@ -99,7 +101,7 @@ int main() {
 	std::cout << "Price of second order(" << orderid1 << "): " << order1->price << "\n";
 
 
-	auto photographer = std::make_shared<Photographer>(order_manager, "Kababoomgler", material_manager, photoreport_manager);
+	auto photographer = std::make_shared<Photographer>(order_manager, "Kababoomgler", clock, material_manager, photoreport_manager);
 	int photographer_id = employee_manager->addEmployee(photographer);
 	std::cout << "Made photographer with employee id: " << photographer_id << "\n";
 

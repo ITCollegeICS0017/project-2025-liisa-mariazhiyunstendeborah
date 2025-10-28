@@ -16,6 +16,7 @@ Employee* EmployeeManager::findEmployee(int emp_id) {
 
 int EmployeeManager::addEmployee(std::shared_ptr<Employee> employee)  {
     int emp_id = next_id++;
+    employee->emp_id = emp_id;
     employees.insert({emp_id, employee});
     return emp_id;
     //E: ? copies of employees possible?

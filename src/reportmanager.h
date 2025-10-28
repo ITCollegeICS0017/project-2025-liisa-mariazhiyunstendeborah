@@ -39,6 +39,7 @@ ReportT* ReportManager<ReportT>::findReport(int reportid) {
 template <typename ReportT>
 int ReportManager<ReportT>::addReport(std::shared_ptr<ReportT> report) {
     int reportid = next_id++;
+    report->reportid = reportid;
     reports.insert({reportid, report});
     return reportid;
 }
