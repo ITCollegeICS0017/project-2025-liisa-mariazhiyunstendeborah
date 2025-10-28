@@ -10,7 +10,7 @@
 int main() {
 //example implementation, create Material, Order, Receptionist, Photographer, Administrator, assignOrder,
 //switchOrderStatus, consumeMaterial, submit ReceptReport, submit PhotoReport, listMaterials
-//Todo: Add Administrator example implementation
+//Todo: Add employee names and removing materials, employees, reports implementation
 	OrderManager* order_manager = new OrderManager();
 	ReceptReportManager* receptreport_manager = new ReceptReportManager();
 	PhotoReportManager* photoreport_manager = new PhotoReportManager();
@@ -20,16 +20,28 @@ int main() {
 
 	auto material = std::make_shared<Material>("paper", 20);
 	auto material1 = std::make_shared<Material>("film", 10);
-	auto admin = std::make_shared<Administrator>(order_manager, material_manager, receptreport_manager, photoreport_manager);
+	auto material2 = std::make_shared<Material>("food", 500);
+	auto admin = std::make_shared<Administrator>(order_manager, "Binkle Bonkler", material_manager, receptreport_manager, photoreport_manager);
 	int admin_id = employee_manager->addEmployee(admin);
 	std::cout << "Made administrator with employee id: " << admin_id << "\n";
 
 	admin->addMaterial(material, 10);
 	admin->addMaterial(material, 10);
 	admin->addMaterial(material1, 10);
+	admin->addMaterial(material2, 10);
 
-	std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
+	std::vector<std::shared_ptr<Material>> materials = admin->listMaterials();
 	std::cout << "Materials: \n";
+
+	for (size_t i = 0; i < materials.size(); i++) {
+		auto& mat = materials[i];
+		std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
+	}
+
+//Todo: this doesn't work :(
+	admin->removeMaterial(material2->mat_type);
+	materials = admin->listMaterials();
+	std::cout << "Materials after removing food: \n";
 
 	for (size_t i = 0; i < materials.size(); i++) {
 		auto& mat = materials[i];
@@ -43,7 +55,7 @@ int main() {
 	Service service2 = Film_devel;
 	int in_x_days = 3;
 
-	auto receptionist = std::make_shared<Receptionist>(order_manager, receptreport_manager);
+	auto receptionist = std::make_shared<Receptionist>(order_manager, "Schmongler", receptreport_manager);
 	int receptionist_id = employee_manager->addEmployee(receptionist);
 	std::cout << "Made receptionist with employee id: " << receptionist_id << "\n";
 
@@ -69,7 +81,7 @@ int main() {
 	std::cout << "Price of second order(" << orderid1 << "): " << order1->price << "\n";
 
 
-	auto photographer = std::make_shared<Photographer>(order_manager, material_manager, photoreport_manager);
+	auto photographer = std::make_shared<Photographer>(order_manager, "Kababoomgler", material_manager, photoreport_manager);
 	int photographer_id = employee_manager->addEmployee(photographer);
 	std::cout << "Made photographer with employee id: " << photographer_id << "\n";
 
