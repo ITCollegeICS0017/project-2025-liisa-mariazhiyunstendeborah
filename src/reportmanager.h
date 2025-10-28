@@ -32,28 +32,38 @@ ReportT* ReportManager<ReportT>::findReport(int reportid) {
     if (iter != reports.end()) {
         return iter->second.get();
     }
-    //E:
     return nullptr;
 }
 
 template <typename ReportT>
 int ReportManager<ReportT>::addReport(std::shared_ptr<ReportT> report) {
-    int reportid = next_id++;
-    report->reportid = reportid;
-    reports.insert({reportid, report});
-    return reportid;
+    if (report->reportid == 0) {
+        int reportid = next_id++;
+        report->reportid = reportid;
+        reports.insert({reportid, report});
+        return reportid;
+    } else {
+        throw std::invalid_argument("Report already exists!");
+    }
 }
 
 template <typename ReportT>
 void ReportManager<ReportT>::editReport (int reportid, std::shared_ptr<ReportT> updatedReport) {
-    //E: if reportid not ofund for example
-    reports.at(reportid) = updatedReport;
+    if (!findReport(reportid)) {
+        throw std::invalid_argument("Report not found!");
+    } else {
+        reports.at(reportid) = updatedReport;
+    }
 }
 
 template <typename ReportT>
 void ReportManager<ReportT>::deleteReport(int reportid) {
+    if (!findReport(reportid)) {
+        throw std::invalid_argument("Report does not exist to be deleted!");
+    } else {
     //E: e.g. if reportid not found
-    reports.erase(reportid);
+        reports.erase(reportid);
+    }
 }
 
 class ReceptReportManager : public ReportManager<ReceptReport> {

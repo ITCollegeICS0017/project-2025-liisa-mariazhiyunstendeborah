@@ -13,23 +13,27 @@ Client* ClientManager::findClient(int client_id) {
 }
 
 int ClientManager::addClient(std::shared_ptr<Client> client) {
-    if (!findClient(client->client_id)) {
+    if (client->client_id == 0) {
     int client_id = next_id++;
     client->client_id = client_id;
     clients.insert({client_id, client});
     return client_id;
     } else {
-        return -1;
-        //Throw an exception of some kind
+        throw std::invalid_argument("Client already exists!");
     }
 }
 
 void ClientManager::editClient(int client_id, std::shared_ptr<Client> updated_client) {
+    if (!findClient(client_id)) {
+        throw std::invalid_argument("Client not found!");
+    }
     clients.at(client_id) = updated_client;
-    //E: ?
 }
 
 void ClientManager::deleteClient(int client_id) {
-    clients.erase(client_id);
-    //E: ?
+    if (!findClient(client_id)) {
+        throw std::invalid_argument("Client does not exist to be deleted!");
+    } else {
+        clients.erase(client_id);
+    }
 }

@@ -6,9 +6,8 @@
 #include "client.h"
 #include "clocks.h"
 
-//Todo: some way of changing/setting the below variables
-constexpr int pay_per_day = 1400;
-constexpr double expr_surcharge = 1.25;
+extern unsigned int pay_per_day;
+extern double expr_surcharge;
 
 enum Service
 {
@@ -32,7 +31,7 @@ class Order {
         unsigned int in_x_days;
         IClock& clock;
         std::chrono::year_month_day date_created;
-        int orderid;
+        int orderid = 0;
         CompletionStatus compl_status = Created;
         float price = 0.0f;
         int assigned_emp_id;
@@ -40,8 +39,6 @@ class Order {
         Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, IClock& clock);
 
         virtual ~Order() = default;
-
-        Order* viewOrder();
 
         float priceCalc(unsigned int in_x_days);
 };

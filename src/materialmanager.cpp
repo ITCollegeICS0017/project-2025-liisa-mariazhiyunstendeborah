@@ -6,21 +6,32 @@ std::vector<std::shared_ptr<Material>>& MaterialManager::getMaterials() {
 }
 
 void MaterialManager::addMaterial(std::shared_ptr<Material> material)  {
+    if (!findMaterialbyType(material->mat_type)) {
     materials.push_back(material);
+    } else {
+        throw std::invalid_argument("Material already exists!");
+    }
 }
 
 void MaterialManager::editMaterial(const std::shared_ptr<Material>& updated_mat)  {
-    for (auto& material : materials) {
-        if (material->mat_type == updated_mat->mat_type) {
-            material = updated_mat;
-            return;
+    if (!findMaterialbyType(updated_mat->mat_type)) {
+        throw std::invalid_argument("Material not found!");
+    } else {
+        for (auto& material : materials) {
+            if (material->mat_type == updated_mat->mat_type) {
+                material = updated_mat;
+                return;
+            }
         }
     }
-    //E: if not found, make known
 }
 
 void MaterialManager::deleteMaterial(std::string mat_type)  {
-    materials.erase(std::remove_if(materials.begin(), materials.end(), [mat_type](const std::shared_ptr<Material>& material) { return material->mat_type == mat_type; }), materials.end());
+    if (!findMaterialbyType(mat_type)) {
+        throw std::invalid_argument("Employee does not exist to be deleted!");
+    } else {
+        materials.erase(std::remove_if(materials.begin(), materials.end(), [mat_type](const std::shared_ptr<Material>& material) { return material->mat_type == mat_type; }), materials.end());
+    }
 }
 
 Material* MaterialManager::findMaterialbyType(std::string mat_type) {
@@ -30,5 +41,4 @@ Material* MaterialManager::findMaterialbyType(std::string mat_type) {
         }
     }
     return nullptr;
-    //E: if not found, make known
 }

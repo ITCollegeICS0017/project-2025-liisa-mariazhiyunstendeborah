@@ -5,7 +5,7 @@
 
 class Client {
     public:
-        int client_id;
+        int client_id = 0;
         std::string client_name;
         //any other data we'd expect to get from one and
         //want to store in a hypothetical database

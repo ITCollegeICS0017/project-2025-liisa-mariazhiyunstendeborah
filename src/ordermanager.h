@@ -1,6 +1,7 @@
 #ifndef ORDERMANAGER_H
 #define ORDERMANAGER_H
 
+#include <stdexcept>
 #include <map>
 #include <memory>
 #include "order.h"

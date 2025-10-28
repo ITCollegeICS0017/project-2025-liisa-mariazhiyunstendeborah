@@ -123,8 +123,8 @@ int main() {
 		std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
 	}
 
-	int photoreportid = photographer->submitReport(photographer_id);
-	int receptreportid = receptionist->submitReport(receptionist_id);
+	int photoreportid = photographer->submitReport();
+	int receptreportid = receptionist->submitReport();
 
 	std::cout << "Total revenue of completed orders: " << receptreport_manager->findReport(receptreportid)->total_revenue << "\n";
 

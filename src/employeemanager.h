@@ -1,6 +1,7 @@
 #ifndef EMPLOYEEMANAGER_H
 #define EMPLOYEEMANAGER_H
 
+#include <stdexcept>
 #include <map>
 #include <memory>
 #include "employees.h"

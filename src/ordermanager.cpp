@@ -6,13 +6,11 @@ Order* OrderManager::findOrder(int orderid) {
     if (iter != orders.end()) {
         return iter->second.get();
     }
-    //E: make err
     return nullptr;
 }
 
 const std::map<int, std::shared_ptr<Order>>& OrderManager::getOrders()  const  {
     return orders;
-    //E: ?
 }
 
 std::map<int, std::shared_ptr<Order>> OrderManager::getCompletedOrders()  const {
@@ -23,7 +21,6 @@ std::map<int, std::shared_ptr<Order>> OrderManager::getCompletedOrders()  const 
         }
     }
     return completed_orders;
-    //E: ?
 }
 
 float OrderManager::calculateProfits(const std::map<int, std::shared_ptr<Order>>& completed_orders) const {
@@ -31,24 +28,32 @@ float OrderManager::calculateProfits(const std::map<int, std::shared_ptr<Order>>
         for (const auto& order : completed_orders) {
             profits += order.second->price;
         }
-    //E: ?
     return profits;
 }
 
 int OrderManager::addOrder(std::shared_ptr<Order> order)  {
+    if (order->orderid == 0) {
     int orderid = next_id++;
     order->orderid = orderid;
     orders.insert({orderid, order});
     return orderid;
+    } else {
+        throw std::invalid_argument("Order already exists!");
+    }
 }
 
 void OrderManager::editOrder(int orderid, std::shared_ptr<Order> updated_order)  {
-    orders.at(orderid) = updated_order;
-    //E: ? check updated_order valid maybe?
+    if (!findOrder(orderid)) {
+        throw std::invalid_argument("Order not found!");
+    } else {
+        orders.at(orderid) = updated_order;
+    }
 }
 
 void OrderManager::deleteOrder(int orderid)  {
-    //I: leaves gaps when erasing cuz of how
-    //orderid is set
-    orders.erase(orderid);
+    if (!findOrder(orderid)) {
+        throw std::invalid_argument("Order does not exist to be deleted!");
+    } else {
+        orders.erase(orderid);
+    }
 }

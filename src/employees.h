@@ -12,16 +12,18 @@
 #include "reportmanager.h"
 #include "materialmanager.h"
 #include "clocks.h"
+#include "employeemanager.h"
 
 class OrderManager;
 class IClock;
+class EmployeeManager;
 
 class Employee {
     protected:
         OrderManager* order_manager;
 
     public:
-        int emp_id;
+        int emp_id = 0;
         std::string emp_name;
 
         Employee(OrderManager* order_manager, std::string emp_name) : order_manager(order_manager), emp_name(emp_name) { }
@@ -50,7 +52,7 @@ class Receptionist: public Employee {
 
         void assignOrder(Order* assign, int emp_id);
 
-        int submitReport(int emp_id);
+        int submitReport();
 };
 
 class MaterialManager;
@@ -71,11 +73,11 @@ class Photographer: public Employee {
 
         void switchOrderStatus(Order* changedorder, CompletionStatus compl_status);
 
-        void consumeMaterial(std::string mat_type, int quantity);
+        void consumeMaterial(std::string mat_type, unsigned int quantity);
 
         std::map<std::shared_ptr<Material>, int> getConsumedMaterials();
 
-        int submitReport(int emp_id);
+        int submitReport();
 
         ~Photographer() override;
 };
@@ -98,7 +100,7 @@ class Administrator: public Employee {
 
         std::vector<std::shared_ptr<Material>> listMaterials();
 
-        void addMaterial(std::shared_ptr<Material> material, int quantity);
+        void addMaterial(std::shared_ptr<Material> material, unsigned int quantity);
 
         void removeMaterial(std::string mat_type);
 };

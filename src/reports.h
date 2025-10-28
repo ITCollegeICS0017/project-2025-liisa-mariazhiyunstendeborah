@@ -10,7 +10,7 @@
 
 class Report {
     public:
-        int reportid;
+        int reportid = 0;
         int creator_id;
         IClock& clock;
         std::chrono::year_month_day date_created;
@@ -18,9 +18,6 @@ class Report {
         Report(int creator_id, IClock& clock);
 
         virtual ~Report() = default;
-
-        //to be defined if need be
-        virtual void saveReport();
 };
 
 class ReceptReport : public Report {
