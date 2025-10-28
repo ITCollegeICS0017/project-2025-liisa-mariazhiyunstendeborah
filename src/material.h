@@ -9,6 +9,7 @@ class Material{
         std::string mat_type;
         int stock_qty = 0;
 
+        Material(std::string mat_type) : mat_type(mat_type) { }
         Material(std::string mat_type, int stock_qty) : mat_type(mat_type), stock_qty(stock_qty) { }
 
         virtual ~Material() = default;

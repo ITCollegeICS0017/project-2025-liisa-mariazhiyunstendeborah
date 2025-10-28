@@ -66,7 +66,7 @@ class Photographer: public Employee {
 
         void switchOrderStatus(Order* changedorder, CompletionStatus compl_status);
 
-        void consumeMaterial(std::shared_ptr<Material> material, int quantity);
+        void consumeMaterial(std::string mat_type, int quantity);
 
         std::map<std::shared_ptr<Material>, int> getConsumedMaterials();
 

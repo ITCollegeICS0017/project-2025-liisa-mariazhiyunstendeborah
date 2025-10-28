@@ -36,13 +36,15 @@ void Photographer::switchOrderStatus(Order* changedorder, CompletionStatus compl
     }
 }
 
-void Photographer::consumeMaterial(std::shared_ptr<Material> material, int quantity){
-    if (!material_manager->findMaterialbyType(material->mat_type)) {
-        std::cout << "Material doesn't exist!";
+void Photographer::consumeMaterial(std::string mat_type, int quantity){
+    auto material = material_manager->findMaterialbyType(mat_type);
+    if (!material) {
+        std::cout << "Material doesn't exist";
+    } else if (material->stock_qty < quantity) {
+        std::cout << "Not enough of this material in stock!";
     } else {
     material->stock_qty -= quantity;
-    material_manager->editMaterial(material);
-    consumed_materials->addMaterial(material);
+    consumed_materials->addMaterial(std::make_shared<Material>(mat_type, quantity));
     }
 }
 
@@ -85,9 +87,10 @@ void Administrator::addMaterial(std::shared_ptr<Material> material, int quantity
     if (mat != nullptr) {
         material->stock_qty += quantity;
         material_manager->editMaterial(material);
-    }
+    } else {
     material->stock_qty = quantity;
     material_manager->addMaterial(material);
+    }
 }
 
 void Administrator::removeMaterial(std::string mat_type){
