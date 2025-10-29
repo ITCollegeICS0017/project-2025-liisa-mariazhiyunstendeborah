@@ -207,7 +207,6 @@ public:
                 return 0; });
         userParser.loopCommands(false);
     }
-
     void list_users()
     {
         map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
@@ -288,7 +287,6 @@ public:
             std::cout << "\nID: " << key << " Client: " << val->client->client_name << endl;
             std::cout << "Date created: " << val->date_created << "\n";
             std::cout << "Status: " << dispCompStatus(val->compl_status) << "\n";
-            std::cout << "Date created: " << val->date_created << "\n";
 
             int tmpint = val->assigned_emp_id;
             if (val->assigned_emp_id > 0)
@@ -324,6 +322,21 @@ public:
             }
         }
     }
+        std::map<int, std::shared_ptr<Order>> get_orders_emp_id(int id)
+    {
+        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::map<int, std::shared_ptr<Order>> emporders = order_manager->getOrders();
+        std::cout << "Orders: \n";
+        for (auto const &[key, val] : orders)
+        {
+            if (val->assigned_emp_id == id)
+            {
+                emporders[key] = val;
+                //std::cout << get_order(key);
+            }
+        }
+        return emporders;
+    }
     int useridByName(string name)
     {
         map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
@@ -336,17 +349,99 @@ public:
         }
         return -1;
     }
-
-    void view_Photographer()
+    void view_photographer_edit_order(int id){
+         cmdParser<int> parser;
+        Order *order = order_manager->findOrder(id);
+        function<void()> updateheader = [this, id, &parser]()
+        {
+            string header = "editing order [" + to_string(id) + "]";
+            header += get_order(id);
+            parser.setContext(viewContextBase(header));
+            return;
+        };
+        updateheader();
+        parser.addCommand("Edit Status",[&order,updateheader,this](){
+            cmdParser<int> statParser;
+            statParser.setContext("Select Status");
+            statParser.addCommand("In Progress",[&order,this](){dynamic_cast<Photographer*>(CurrentUser)->switchOrderStatus(order,CompletionStatus::InProgress); return 1; });
+            statParser.addCommand("Completed",[&order,this](){dynamic_cast<Photographer*>(CurrentUser)->switchOrderStatus(order,CompletionStatus::Completed); return 1; });
+            
+            
+            statParser.loopCommands(false);
+            updateheader(); 
+            return 1;});
+       
+        parser.loopCommands();
+    }
+    void view_photographer()
     {
         std::cout << "Role: Photographer\n\n";
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Photographer actions:"));
+
         parser.addCommand("View my assigned orders", [this]()
                           {list_orders_emp_id(emp_id); return 1; });
+
+        parser.addCommand("Edit my assigned order", [this]()
+                          {
+                            cmdParser<int> ordParser;
+                            ordParser.setContext("Select Order");
+                            for(auto const&[key,val] : get_orders_emp_id(emp_id)){
+                                 string name = val->client->client_name;
+                                string k = to_string(key);
+                                string date = chrono_to_string(val->date_created);
+                                string comp = dispCompStatus(val->compl_status);
+                                string service = dispService(val->service);
+                                string indays = to_string(val->in_x_days);
+                                string price = to_string(val->priceCalc(val->in_x_days));
+                                ordParser.addCommand("ID: "+k+ " Status: "+ comp+ " Client: " + name + " Date Created: "+ date,[key](){
+                                    return key;
+                                });
+                            }
+                            int ordid = ordParser.valueFromCommand(-1, "None");
+                            if (ordid == -1){return 1;}
+                            view_photographer_edit_order(ordid);
+                            ; return 1; });
+
+         parser.addCommand("Consume materials",[this](){
+            std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
+            cmdParser<string> matparser;
+            matparser.setContext("Select Material");
+
+            for(auto &material : materials){
+                string mat = material->mat_type;
+                string stock = to_string(material->stock_qty);
+                matparser.addCommand( mat + " Quantity: " + stock,[mat,material,this]()
+                {
+                    IOhandler<int> inthandler("Amount to remove");
+                    int remove = -1;
+                    while (remove < 0 || (int(material->stock_qty) - remove) < 0){
+                        remove = inthandler.getInput();
+                        std::cout << "\nQuantity after removing" << (int(material->stock_qty) - remove) << "\n";
+                        if(remove < 0){
+                            std::cout << "Must be positive number\n";
+                        }
+                    }
+                    unsigned int uremove = unsigned(remove);
+                    dynamic_cast<Photographer*>(CurrentUser)->consumeMaterial(material->mat_type,uremove);
+
+                    return mat;
+                } );
+            }
+            matparser.loopCommands(false);
+
+            return 1;});
         parser.loopCommands();
     }
-    void view_receptionsit_edit_order(int id)
+   
+    void view_administrator()
+    {
+        std::cout << "Role: Administrator\n\n";
+        cmdParser<int> parser;
+        parser.setContext(viewContextBase("Administrator actions:"));
+    }
+
+     void view_receptionsit_edit_order(int id)
     {
         cmdParser<int> parser;
         Order *order = order_manager->findOrder(id);
@@ -395,13 +490,8 @@ public:
             return 1;});
         parser.loopCommands();
     }
-    void view_Administrator()
-    {
-        std::cout << "Role: Administrator\n\n";
-        cmdParser<int> parser;
-        parser.setContext(viewContextBase("Administrator actions:"));
-    }
-    void view_Receptionist()
+
+    void view_receptionist()
     {
         std::cout << "Role: Receptionist\n\n";
         cmdParser<int> parser;
@@ -501,15 +591,15 @@ public:
 
         if (usertype == "Photographer")
         {
-            view_Photographer();
+            view_photographer();
         }
         else if (usertype == "Receptionist")
         {
-            view_Receptionist();
+            view_receptionist();
         }
         else if (usertype == "Administrator")
         {
-            view_Administrator();
+            view_administrator();
         }
         else
         {
