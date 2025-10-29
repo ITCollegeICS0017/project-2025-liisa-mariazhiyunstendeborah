@@ -439,6 +439,33 @@ public:
         std::cout << "Role: Administrator\n\n";
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Administrator actions:"));
+        parser.addCommand("List Receptionist Reports",[](){return 1;});
+        parser.addCommand("List Photographer Reports",[](){return 1;});
+        parser.addCommand("List Materials",[this](){
+            std::vector<std::shared_ptr<Material>> materials = dynamic_cast<Administrator*>(CurrentUser)->listMaterials();
+            for(auto &material : materials){
+                std::cout << material->mat_type << " Amount: " << material->stock_qty << "\n\n";
+            }
+            return 1;});
+        parser.addCommand("Remove Materials",[this](){
+            std::vector<std::shared_ptr<Material>> materials = dynamic_cast<Administrator*>(CurrentUser)->listMaterials();
+
+            cmdParser<string> matparser;
+            matparser.setContext("Select Material to Remove Permanently");
+
+            for(auto &material : materials){
+                string mat = material->mat_type;
+                string stock = to_string(material->stock_qty);
+                matparser.addCommand( mat + " Quantity: " + stock,[mat,material,this]()
+                {
+                    dynamic_cast<Administrator*>(CurrentUser)->removeMaterial(material->mat_type);
+                    return mat;
+                } );
+            }
+            matparser.loopCommands(false);
+            return 1;});
+        parser.addCommand("Add Material",[](){return 1;});
+        parser.loopCommands();
     }
 
      void view_receptionsit_edit_order(int id)
