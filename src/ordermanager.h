@@ -1,6 +1,7 @@
 #ifndef ORDERMANAGER_H
 #define ORDERMANAGER_H
 
+#include <stdexcept>
 #include <map>
 #include <memory>
 #include "order.h"
@@ -17,17 +18,17 @@ class OrderManager {
 
         Order* findOrder(int orderid);
 
-        const std::map<int, std::shared_ptr<Order>>& getOrders()  const ;
+        const std::map<int, std::shared_ptr<Order>>& getOrders()  const;
 
         std::map<int, std::shared_ptr<Order>> getCompletedOrders()  const;
 
         float calculateProfits(const std::map<int, std::shared_ptr<Order>>& completed_orders) const;
 
-        int addOrder(std::shared_ptr<Order> order) ;
+        int addOrder(std::shared_ptr<Order> order);
 
-        void editOrder(int orderid, std::shared_ptr<Order> updated_order) ;
+        void editOrder(int orderid, std::shared_ptr<Order> updated_order);
 
-        void deleteOrder(int orderid) ;
+        void deleteOrder(int orderid);
 };
 
 #endif
