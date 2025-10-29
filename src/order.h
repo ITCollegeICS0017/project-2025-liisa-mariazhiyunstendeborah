@@ -34,7 +34,7 @@ class Order {
         int orderid = 0;
         CompletionStatus compl_status = Created;
         float price = 0.0f;
-        int assigned_emp_id;
+        int assigned_emp_id = 0;
 
         Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, IClock& clock);
 

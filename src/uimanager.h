@@ -12,6 +12,7 @@
 #include <functional>
 #include <string>
 #include <chrono>
+#include <memory>
 
 //	UImanager* uimanager = new UImanager(order_manager, client_manager, employee_manager, photoreport_manager, receptreport_manager, material_manager);
 
@@ -120,6 +121,20 @@ public:
         std::string s = std::format("{:%Y-%m-%d}", std::chrono::sys_days{ymd});
         return s;
     }
+    
+    int selectCustomerId(){
+         IOhandler<int> inthandler("User id");
+            cmdParser<int> clientParser;
+            clientParser.setContext("Select Client");
+            std::map<int, std::shared_ptr<Client>> clients = client_manager->getClients();
+            for (auto const &[key, val] : clients)
+                {
+                    clientParser.addCommand((string(val->client_name) + " - id: " + to_string(key)), [key](){
+                        return key;
+                    });
+                }
+            return clientParser.valueFromCommand(-1, "no client");
+    }
     void view_login()
     {
         map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
@@ -190,7 +205,7 @@ public:
             }
 
                 return 0; });
-        userParser.loopCommands();
+        userParser.loopCommands(false);
     }
 
     void list_users()
@@ -256,6 +271,13 @@ public:
         }
         return false;
     }
+    void list_clients(){
+         std::map<int, std::shared_ptr<Client>> clients = client_manager->getClients();
+            for (auto const &[key, val] : clients)
+                {
+                    std::cout << "Client ID: " << key <<" Client name: " << val->client_name << "\n"; 
+                }
+    }
 
     void list_orders()
     {
@@ -279,7 +301,18 @@ public:
             }
         }
     }
-    void emp_orders_id(int id)
+    void list_orders_client_id(int id){
+        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::cout << "Orders: \n";
+        for (auto const &[key, val] : orders)
+        {
+            if (val->client->client_id == id)
+            {
+                std::cout << get_order(key);
+            }
+        }
+    }
+    void list_orders_emp_id(int id)
     {
         std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
         std::cout << "Orders: \n";
@@ -310,10 +343,10 @@ public:
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Photographer actions:"));
         parser.addCommand("View my assigned orders", [this]()
-                          {emp_orders_id(emp_id); return 1; });
+                          {list_orders_emp_id(emp_id); return 1; });
         parser.loopCommands();
     }
-    void view_order_edit_rec(int id)
+    void view_receptionsit_edit_order(int id)
     {
         cmdParser<int> parser;
         Order *order = order_manager->findOrder(id);
@@ -339,23 +372,27 @@ public:
                         order->compl_status = CompletionStatus::Assigned;
                     }
                 }
-            int pid = Photographers.valueFromCommand(-1);
+            int pid = Photographers.valueFromCommand(-1,"no changes");
 
-            if (pid != -1){
-                dynamic_cast<Receptionist*>(CurrentUser)->assignOrder(order,pid);
+            if (pid == -1){
+                std::cout << "No changes made\n\n";
+                return 1;    
             }
+            dynamic_cast<Receptionist*>(CurrentUser)->assignOrder(order,pid);
             updateheader();
             return 1; });
         parser.addCommand("Edit Status",[&order,updateheader](){
             cmdParser<CompletionStatus> statParser;
             statParser.setContext("Select Status");
-            statParser.addCommand("Assigned",[](){return CompletionStatus::Assigned;});
+          //  statParser.addCommand("Assigned",[](){return CompletionStatus::Assigned;});
+            statParser.addCommand("Created",[&order](){
+                order->assigned_emp_id = 0;
+                return CompletionStatus::Created;});
             statParser.addCommand("In Progress",[](){return CompletionStatus::InProgress;});
             statParser.addCommand("Completed",[](){return CompletionStatus::Completed;});
-            order->compl_status = statParser.valueFromCommand(CompletionStatus::Assigned);
+            order->compl_status = statParser.valueFromCommand(order->compl_status, "no changes");
             updateheader(); 
             return 1;});
-
         parser.loopCommands();
     }
     void view_Administrator()
@@ -397,8 +434,55 @@ public:
                 valid = id_valid_order(id);
             
             }
-            view_order_edit_rec(id);
+            view_receptionsit_edit_order(id);
              return 1; });
+        parser.addCommand("list Clients",[this](){list_clients();return 1;});
+        parser.addCommand("list client orders",[this](){
+                int id = selectCustomerId();
+            if(id == -1){
+                return 1;
+            }
+            list_orders_client_id(id);
+            return 1;});
+        parser.addCommand("Add Order", [this](){
+            int cli_id = selectCustomerId(); 
+            if(cli_id == -1){
+                std::cout << "No client selected. Exiting.\n\n";
+                return 1;
+            }
+
+          //// shared_ptr<Client> client = _client;
+            cmdParser<Service> srvParser;
+            std::shared_ptr<Client> client(client_manager->findClient(cli_id), [](Client*) {});
+
+            srvParser.setContext("Select service");
+            srvParser.addCommand("Photo printing",[](){return Service::Photo_printing;});
+            srvParser.addCommand("Film Development",[](){return Service::Film_devel;});
+            Service srv = srvParser.valueFromCommand(Service::Photo_printing, "Photo Print");
+            IOhandler<int> dayparser("How many days to complete");
+            unsigned int days;
+            bool days_correct = false;
+            do{
+                int i = dayparser.getInput();
+                if (i > 0){
+                    days_correct = true;
+                    days = unsigned(i);
+                }
+                else{
+                    std::cout << "Enter value over 0\n";
+                }
+
+            } while(!days_correct);
+            int id = dynamic_cast<Receptionist*>(CurrentUser)->makeOrder(client,srv,days);
+            std::cout << get_order(id);
+
+            return 1;});
+        parser.addCommand("Add Client",[this](){
+            IOhandler<string> strhandler("Client name: ");
+            auto client = std::make_shared<Client>(strhandler.getInput());
+            client_manager->addClient(client);
+            return 1;
+        });
 
         parser.loopCommands();
     }
@@ -433,7 +517,7 @@ public:
         }
         return;
     }
-    int view_main()
+int view_main()
     {
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Photo Studio Main"));

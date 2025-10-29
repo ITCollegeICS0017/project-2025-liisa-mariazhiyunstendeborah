@@ -51,6 +51,14 @@ public:
         return input;
     }
 };
+template <>
+inline std::string IOhandler<std::string>::getInput()
+{
+    std::string input;
+    std::cout << "Enter " << context << ": ";
+    std::getline(std::cin >> std::ws, input); // read full line, trimming leading whitespace
+    return input;
+}
 
 template <typename T>
 class cmdParser
@@ -83,18 +91,21 @@ public:
             cout << " - " << key << '\n';
         }
     }
-    T valueFromCommand(T defaultVal){
+    T valueFromCommand(T defaultVal, string default_string = "Default Value"){
         T returnVal = defaultVal;
+        int x = 0;
+        
         while (true)
         {
 
             int i = 1;
             map<int, string> sesh;
 
-            sesh[0] = "exit";
+            sesh[0] = default_string;
 
             cout << context << endl;
-            cout << "enter 0 to exit with: "<< returnVal <<endl << endl;
+            
+            
             cout << "select value from: \n";
             for (const auto &[key, value] : commands)
             {
@@ -103,7 +114,6 @@ public:
                 i++;
             }
             i--;
-            int x = 0;
             do
             {
                 if (x > i)
@@ -114,12 +124,12 @@ public:
                 {
                     cout << "value must not be negative" << endl;
                 }
+                cout << "enter 0 to exit with: "<< sesh[x] <<endl << endl;
                 x = IOhandler<int>("Command ID").getInput();
-
+                
             } while (x > i || x < 0);
-
-            cout << "selected value: " << sesh.at(x) << endl;
-            if (sesh.at(x) == "exit")
+            cout << "\n\n";
+            if (sesh.at(x) == default_string)
             {
                 return returnVal;
             }
@@ -129,15 +139,14 @@ public:
             }
         }
     }
-    void loopCommands(bool add_exit = true)
+    void loopCommands(bool looping = true)
     {
-        bool looping = true;
-        while (looping)
+        do
         {
-
+            
             int i = 1;
             map<int, string> sesh;
-
+            
             cout << context << endl;
             for (const auto &[key, value] : commands)
             {
@@ -145,11 +154,9 @@ public:
                 sesh[i] = key;
                 i++;
             }
-            if(add_exit){
                 sesh[0] = "exit";
                 cout << "enter 0 to exit" <<endl;
-
-            }
+                
             int x = 0;
             do
             {
@@ -164,7 +171,7 @@ public:
                 x = IOhandler<int>("Command ID").getInput();
 
             } while (x > i || x < 0);
-
+            
             cout << "selected command: " << sesh.at(x) << "\n\n";
             if (sesh.at(x) == "exit")
             {
@@ -175,7 +182,7 @@ public:
             {
                 run(sesh.at(x));
             }
-        }
+        }while (looping);
     }
 
     string getContext()
