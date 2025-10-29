@@ -9,7 +9,6 @@ int Receptionist::makeOrder(std::shared_ptr<Client> client, Service service, uns
     return order_manager->addOrder(order);
 }
 
-//Todo: consoleui must make sure that employee eixsts
 void Receptionist::assignOrder(Order* assign, int emp_id){
     if (assign != nullptr) {
         assign->assigned_emp_id = emp_id;
@@ -83,13 +82,12 @@ std::vector<std::shared_ptr<Material>> Administrator::listMaterials(){
     return material_manager->getMaterials();
 }
 
-void Administrator::addMaterial(std::shared_ptr<Material> material, unsigned int quantity){
-    auto mat = material_manager->findMaterialbyType(material->mat_type);
+void Administrator::addMaterial(std::string mat_type, unsigned int quantity){
+    auto mat = material_manager->findMaterialbyType(mat_type);
     if (mat != nullptr) {
-        material->stock_qty += quantity;
-        material_manager->editMaterial(material);
+        mat->stock_qty += quantity;
     } else {
-    material->stock_qty = quantity;
+    auto material = std::make_shared<Material>(mat_type, quantity);
     material_manager->addMaterial(material);
     }
 }

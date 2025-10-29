@@ -29,10 +29,10 @@ int main() {
 	int admin_id = employee_manager->addEmployee(admin);
 	std::cout << "Made administrator with employee id: " << admin_id << "\n";
 
-	admin->addMaterial(material, 10);
-	admin->addMaterial(material, 10);
-	admin->addMaterial(material1, 10);
-	admin->addMaterial(material2, 10);
+	admin->addMaterial(material->mat_type, 10);
+	admin->addMaterial(material->mat_type, 10);
+	admin->addMaterial(material1->mat_type, 10);
+	admin->addMaterial(material2->mat_type, 10);
 
 	std::vector<std::shared_ptr<Material>> materials = admin->listMaterials();
 	std::cout << "Materials: \n";

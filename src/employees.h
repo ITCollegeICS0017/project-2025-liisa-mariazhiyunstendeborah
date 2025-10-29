@@ -100,7 +100,7 @@ class Administrator: public Employee {
 
         std::vector<std::shared_ptr<Material>> listMaterials();
 
-        void addMaterial(std::shared_ptr<Material> material, unsigned int quantity);
+        void addMaterial(std::string mat_type, unsigned int quantity);
 
         void removeMaterial(std::string mat_type);
 };
