@@ -45,7 +45,7 @@ void Photographer::consumeMaterial(std::string mat_type, unsigned int quantity){
         throw std::invalid_argument("Not enough of this material in stock!");
     } else {
     material->stock_qty -= quantity;
-    consumed_materials->addMaterial(std::make_shared<Material>(mat_type, quantity));
+    //consumed_materials->editMaterial(std::make_shared<Material>(mat_type, quantity));
     }
 }
 

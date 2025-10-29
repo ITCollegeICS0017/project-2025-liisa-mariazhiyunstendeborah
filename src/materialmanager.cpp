@@ -28,7 +28,7 @@ void MaterialManager::editMaterial(const std::shared_ptr<Material>& updated_mat)
 
 void MaterialManager::deleteMaterial(std::string mat_type)  {
     if (!findMaterialbyType(mat_type)) {
-        throw std::invalid_argument("Employee does not exist to be deleted!");
+        throw std::invalid_argument("Material does not exist to be deleted!");
     } else {
         materials.erase(std::remove_if(materials.begin(), materials.end(), [mat_type](const std::shared_ptr<Material>& material) { return material->mat_type == mat_type; }), materials.end());
     }
