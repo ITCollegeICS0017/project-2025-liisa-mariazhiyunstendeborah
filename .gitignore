@@ -3,3 +3,6 @@
 
 #Ignore visualstudio folder
 .vscode
+
+#Ignore app
+app
