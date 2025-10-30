@@ -27,27 +27,27 @@ int main() {
 	auto material2 = std::make_shared<Material>("food");
 	auto admin = std::make_shared<Administrator>(order_manager, "Binkle Bonkler", material_manager, receptreport_manager, photoreport_manager);
 	int admin_id = employee_manager->addEmployee(admin);
-	std::cout << "Made administrator with employee id: " << admin_id << "\n";
+	//std::cout << "Made administrator with employee id: " << admin_id << "\n";
 
-	admin->addMaterial(material, 10);
-	admin->addMaterial(material, 10);
-	admin->addMaterial(material1, 10);
-	admin->addMaterial(material2, 10);
+	admin->addMaterial(material->mat_type, 10);
+	admin->addMaterial(material->mat_type, 10);
+	admin->addMaterial(material1->mat_type, 10);
+	admin->addMaterial(material2->mat_type, 10);
 
 	std::vector<std::shared_ptr<Material>> materials = admin->listMaterials();
-	std::cout << "Materials: \n";
+	//std::cout << "Materials: \n";
 
 	for (size_t i = 0; i < materials.size(); i++) {
 		auto& mat = materials[i];
-		std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
+		//std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
 	}
 
 	admin->removeMaterial(material2->mat_type);
 	materials = admin->listMaterials();
-	std::cout << "Materials after removing food: \n";
+	//std::cout << "Materials after removing food: \n";
 	for (size_t i = 0; i < materials.size(); i++) {
 		auto& mat = materials[i];
-		std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
+		//std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
 	}
 
 	auto client = std::make_shared<Client>("Bones Jones");
@@ -59,26 +59,26 @@ int main() {
 
 	auto receptionist = std::make_shared<Receptionist>(order_manager, "Schmongler", clock, receptreport_manager);
 	int receptionist_id = employee_manager->addEmployee(receptionist);
-	std::cout << "Made receptionist with employee id: " << receptionist_id << "\n";
+	//std::cout << "Made receptionist with employee id: " << receptionist_id << "\n";
 
 	auto badreceptionist = std::make_shared<Receptionist>(order_manager, "Terrible Receptionist", clock, receptreport_manager);
 	int badreceptionist_id = employee_manager->addEmployee(badreceptionist);
-	std::cout << "Made bad receptionist with employee id: " << badreceptionist_id << "\n";
+	//std::cout << "Made bad receptionist with employee id: " << badreceptionist_id << "\n";
 
 	std::map<int, std::shared_ptr<Employee>> employees =  employee_manager->getEmployees();
-	std::cout << "List of employees: " << "\n";
+	//std::cout << "List of employees: " << "\n";
 
 	for (auto employee : employees) {
-	std::cout << "Employee id: " << employee.first << ", Employee's name: " << employee.second->emp_name << "\n";
+	//std::cout << "Employee id: " << employee.first << ", Employee's name: " << employee.second->emp_name << "\n";
 	}
 
 	employee_manager->deleteEmployee(badreceptionist_id);
 
 	employees =  employee_manager->getEmployees();
-	std::cout << "List of employees after removing terrible receptionist: " << "\n";
+	//std::cout << "List of employees after removing terrible receptionist: " << "\n";
 
 	for (auto employee : employees) {
-	std::cout << "Employee id: " << employee.first << ", Employee's name: " << employee.second->emp_name << "\n";
+	//std::cout << "Employee id: " << employee.first << ", Employee's name: " << employee.second->emp_name << "\n";
 	}
 
 	int orderid = receptionist->makeOrder(client, service, in_x_days);
@@ -93,19 +93,19 @@ int main() {
 	}
 
 	std::map<int, std::shared_ptr<Order>> orders =  order_manager->getOrders();
-	std::cout << "Current orders: " << "\n";
+	//std::cout << "Current orders: " << "\n";
 
 	for (auto order : orders) {
-	std::cout << "Orderid: " << order.first << ", Client's name: " << order.second->client->client_name << ", date created: " << order.second->date_created << "\n";
+	//std::cout << "Orderid: " << order.first << ", Client's name: " << order.second->client->client_name << ", date created: " << order.second->date_created << "\n";
 	}
 
-	std::cout << "Price of first order(" << orderid << "): " << order->price << "\n";
-	std::cout << "Price of second order(" << orderid1 << "): " << order1->price << "\n";
+	//std::cout << "Price of first order(" << orderid << "): " << order->price << "\n";
+	//std::cout << "Price of second order(" << orderid1 << "): " << order1->price << "\n";
 
 
 	auto photographer = std::make_shared<Photographer>(order_manager, "Kababoomgler", clock, material_manager, photoreport_manager);
 	int photographer_id = employee_manager->addEmployee(photographer);
-	std::cout << "Made photographer with employee id: " << photographer_id << "\n";
+	//std::cout << "Made photographer with employee id: " << photographer_id << "\n";
 
 	receptionist->assignOrder(order, photographer_id);
 	receptionist->assignOrder(order1, photographer_id);
@@ -116,49 +116,49 @@ int main() {
 	photographer->switchOrderStatus(order1, compl_status);
 	photographer->consumeMaterial(material1->mat_type, 3);
 
-	std::cout << "Orders were completed." << "\n";
+	//std::cout << "Orders were completed." << "\n";
 
-	std::cout << "Materials after consumption: \n";
+	//std::cout << "Materials after consumption: \n";
 	materials = admin->listMaterials();
 	for (size_t i = 0; i < materials.size(); i++) {
 		auto& mat = materials[i];
-		std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
+		//std::cout << mat->mat_type << ", in stock: " << mat->stock_qty << "\n";
 	}
 
 	int photoreportid = photographer->submitReport();
 	int receptreportid = receptionist->submitReport();
 
-	std::cout << "Total revenue of completed orders: " << receptreport_manager->findReport(receptreportid)->total_revenue << "\n";
+	//std::cout << "Total revenue of completed orders: " << receptreport_manager->findReport(receptreportid)->total_revenue << "\n";
 
-	std::cout << "Consumed materials: " << "\n";
+	////std::cout << "Consumed materials: " << "\n";
 	for (const auto& [material, quantity] : photoreport_manager->findReport(photoreportid)->consumed_materials) {
-	    std::cout << material->mat_type << ": " << quantity << "\n";
+	    //std::cout << material->mat_type << ": " << quantity << "\n";
 	}
 
-	std::cout << "Receptionist reports that exist: " << "\n";
+	//std::cout << "Receptionist reports that exist: " << "\n";
    for (const auto& [reportid, reportPtr] : admin->listReceptReports()) {
-		std::cout << "Report ID: " << reportid << "\n";
-		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
-		std::cout << "Date created: " << reportPtr->date_created << "\n";
+		//std::cout << "Report ID: " << reportid << "\n";
+		//std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
+		//std::cout << "Date created: " << reportPtr->date_created << "\n";
    }
 
-	std::cout << "Photographer reports that exist: " << "\n";
+	//std::cout << "Photographer reports that exist: " << "\n";
 	for (const auto& [reportid, reportPtr] : admin->listPhotoReports()) {
-		std::cout << "Report ID: " << reportid << "\n";
-		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
-		std::cout << "Date created: " << reportPtr->date_created << "\n";
+		//std::cout << "Report ID: " << reportid << "\n";
+		//std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
+		//std::cout << "Date created: " << reportPtr->date_created << "\n";
 	}
 
-	
+
 	receptreport_manager->deleteReport(receptreportid);
-	std::cout << "Removed receptionist's report." << "\n";
-	std::cout << "Receptionist reports that exist: " << "\n";
+	//std::cout << "Removed receptionist's report." << "\n";
+	//std::cout << "Receptionist reports that exist: " << "\n";
 	for (const auto& [reportid, reportPtr] : admin->listReceptReports()) {
-		std::cout << "Report ID: " << reportid << "\n";
-		std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
-		std::cout << "Date created: " << reportPtr->date_created << "\n";
+		//std::cout << "Report ID: " << reportid << "\n";
+		//std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
+		//std::cout << "Date created: " << reportPtr->date_created << "\n";
 	}
-	std::cout << "\n\n\n";
-
+	//std::cout << "\n\n\n";
+	std::cout << "Example data initialized";
 	uimanager->view_main();
 }

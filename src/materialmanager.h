@@ -8,7 +8,6 @@
 
 class MaterialManager {
     private:
-//Todo: make this into a vector or storing with int, otherwise mat_type is stored twice...
         std::vector<std::shared_ptr<Material>> materials;
 
     public:
