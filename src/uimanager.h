@@ -444,7 +444,7 @@ public:
         parser.addCommand("List Materials",[this](){
             std::vector<std::shared_ptr<Material>> materials = dynamic_cast<Administrator*>(CurrentUser)->listMaterials();
             for(auto &material : materials){
-                std::cout << material->mat_type << " Amount: " << material->stock_qty << "\n\n";
+                std::cout << material->mat_type << " Amount: " << material->stock_qty << "\n";
             }
             return 1;});
         parser.addCommand("Remove Materials",[this](){
@@ -464,7 +464,30 @@ public:
             }
             matparser.loopCommands(false);
             return 1;});
-        parser.addCommand("Add Material",[](){return 1;});
+        parser.addCommand("Add Material",[this](){
+            std::vector<std::shared_ptr<Material>> materials = dynamic_cast<Administrator*>(CurrentUser)->listMaterials();
+            cmdParser<string> matparser;
+            matparser.setContext("Select material to add");
+            for(auto &material : materials){
+                string mat =  material->mat_type ;
+                string qty =  to_string(material->stock_qty);
+                matparser.addCommand(mat + " Amount: " + qty, [mat](){
+                    return mat;
+                });
+            }
+            string mat = matparser.valueFromCommand("New Material", "New Material");
+            if (mat == "New Material"){
+                IOhandler<string> strhandler("New Material Name");
+                mat = strhandler.getInput();
+            }
+            int i = -1;
+            IOhandler<int> inthandler("quantity to add");
+            while (i < 0){
+                i = inthandler.getInput();
+            }
+            unsigned int j = unsigned(i);
+            dynamic_cast<Administrator*>(CurrentUser)->addMaterial(mat,j);
+            return 1;});
         parser.loopCommands();
     }
 
