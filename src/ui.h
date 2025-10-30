@@ -154,15 +154,16 @@ public:
                 sesh[i] = key;
                 i++;
             }
+            i--;
                 sesh[0] = "exit";
                 cout << "enter 0 to exit" <<endl;
                 
             int x = 0;
             do
             {
-                if (x >= i)
+                if (x > i)
                 {
-                    cout << "value must be smaller than: " << i << endl;
+                    cout << "value must be smaller than: " << i+1 << endl;
                 }
                 if (x < 0)
                 {
