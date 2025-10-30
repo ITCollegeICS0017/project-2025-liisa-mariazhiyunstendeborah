@@ -140,9 +140,25 @@ public:
         map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
 
         cmdParser<int> userParser;
+        
+        for(auto const &[key, val] : employees){
+            string uname = val->emp_name;
+            string uid = to_string(key);
+            string role = val->getEmpType();
+
+            userParser.addCommand("id - " + uid + " " + uname + " Role - " + role,[this,key](){
+                CurrentUser = employee_manager->findEmployee(key);
+                emp_id = key; 
+                return 1;
+            });
+        }
+        userParser.setContext(viewContextBase("choose employee"));
+        /*
         userParser.setContext(viewContextBase("Choose login method"));
+        
         userParser.addCommand("Using id", [this, &userParser]()
                               {
+            
             list_users();
             bool id_in_range = false;
             while(!id_in_range){
@@ -205,6 +221,7 @@ public:
             }
 
                 return 0; });
+        */
         userParser.loopCommands(false);
     }
     void list_users()
@@ -251,6 +268,39 @@ public:
         orderstr += "Price: " + price + "€\n";
         orderstr += "\n";
         return orderstr;
+    }
+    string get_report_photographer(int report_id){
+        string repstr = "";
+        auto report = photoreport_manager->findReport(report_id);
+        string repid = to_string(report->reportid);
+        string cid = to_string(report->creator_id);
+        string created = chrono_to_string(report->date_created);
+        repstr += "ID: " + repid + " Employee ID: " + cid + "\n";
+        repstr += "Creation date: " + created + "\n";
+        repstr += "Materials Consumed: \n";
+
+        for (const auto& [key, val] : report->consumed_materials) {
+            string mat = key->mat_type;
+            string q = to_string(val);
+            repstr += mat + " Quantity: "+q+"\n";
+        }
+        return repstr;
+    }
+    string get_report_receptionist(int report_id){
+        string repstr = "";
+        auto report = receptreport_manager->findReport(report_id);
+        string repid = to_string(report->reportid);
+        string cid = to_string(report->creator_id);
+        string created = chrono_to_string(report->date_created);
+        repstr += "ID: " + repid + " Employee ID: " + cid + "\n";
+        repstr += "Creation date: " + created + "\n";
+        repstr += "Materials Consumed: \n";
+
+        for (const auto& [key, val] : report->compl_orders) {
+            repstr += get_order(key);
+
+        }
+        return repstr;
     }
     bool id_valid_order(int id)
     {
@@ -322,21 +372,20 @@ public:
             }
         }
     }
-        std::map<int, std::shared_ptr<Order>> get_orders_emp_id(int id)
-    {
-        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
-        std::map<int, std::shared_ptr<Order>> emporders = order_manager->getOrders();
-        std::cout << "Orders: \n";
-        for (auto const &[key, val] : orders)
-        {
-            if (val->assigned_emp_id == id)
+        std::map<int, std::shared_ptr<Order>> get_orders_emp_id(int id){
+            std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+            std::map<int, std::shared_ptr<Order>> emporders;
+            std::cout << "Orders: \n";
+            for (auto const &[key, val] : orders)
             {
-                emporders[key] = val;
-                //std::cout << get_order(key);
+                if (val->assigned_emp_id == id)
+                {
+                    emporders[key] = val;
+                    //std::cout << get_order(key);
+                }
             }
+            return emporders;
         }
-        return emporders;
-    }
     int useridByName(string name)
     {
         map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
@@ -402,6 +451,12 @@ public:
                             if (ordid == -1){return 1;}
                             view_photographer_edit_order(ordid);
                             ; return 1; });
+        parser.addCommand("Submit report",[this](){
+            int reportid = dynamic_cast<Photographer*>(CurrentUser)->submitReport();
+                std::cout << "\nSubmitted Report, id:" << reportid << " \n";
+                std::cout << get_report_photographer(reportid);
+
+        return 1;});
 
          parser.addCommand("Consume materials",[this](){
             std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
@@ -417,11 +472,17 @@ public:
                     int remove = -1;
                     while (remove < 0 || (int(material->stock_qty) - remove) < 0){
                         remove = inthandler.getInput();
-                        std::cout << "\nQuantity after removing" << (int(material->stock_qty) - remove) << "\n";
                         if(remove < 0){
                             std::cout << "Must be positive number\n";
                         }
+                        if((int(material->stock_qty) - remove) < 0)
+                        {
+
+                            std::cout << "Cannot more remove materials than there are";
+                        }
+                        
                     }
+                    std::cout << "\nQuantity after removing " << (int(material->stock_qty) - remove) << "\n";
                     unsigned int uremove = unsigned(remove);
                     dynamic_cast<Photographer*>(CurrentUser)->consumeMaterial(material->mat_type,uremove);
 
@@ -439,8 +500,36 @@ public:
         std::cout << "Role: Administrator\n\n";
         cmdParser<int> parser;
         parser.setContext(viewContextBase("Administrator actions:"));
-        parser.addCommand("List Receptionist Reports",[](){return 1;});
-        parser.addCommand("List Photographer Reports",[](){return 1;});
+        parser.addCommand("List Receptionist Reports",[this](){
+            cmdParser<int> reportParser;
+            reportParser.setContext("Choose report to view: ");
+
+            //std::cout << "Receptionist Reports\n";
+               
+            for (const auto& [reportid, reportPtr] : dynamic_cast<Administrator*>(CurrentUser)->listReceptReports()) {
+                    string rid = to_string(reportid);
+                    string rctr = to_string(reportPtr->creator_id);
+                    string rdate = chrono_to_string(reportPtr->date_created);
+            /*
+            std::cout << "Report ID: " << reportid << "\n";
+            std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
+            std::cout << "Date created: " << reportPtr->date_created << "\n";
+            */
+                    reportParser.addCommand("ID: "+rid+" Employee: "+rctr+"\nDate created: "+rdate, [this,reportid](){
+                        std::cout << get_report_receptionist(reportid);
+                    return 1;
+                    });
+
+
+                    }
+            reportParser.loopCommands();
+            return 1;});
+        parser.addCommand("List Photographer Reports",[this](){
+            std::cout << "Photographer reports that exist: " << "\n";
+            for (const auto& [reportid, reportPtr] : dynamic_cast<Administrator*>(CurrentUser)->listPhotoReports()) {
+                std::cout << get_report_photographer(reportid);
+            }
+            return 1;});
         parser.addCommand("List Materials",[this](){
             std::vector<std::shared_ptr<Material>> materials = dynamic_cast<Administrator*>(CurrentUser)->listMaterials();
             for(auto &material : materials){
@@ -549,35 +638,45 @@ public:
         parser.addCommand("list orders", [this]()
                           {list_orders();return 1; });
         // parser.addCommand("assign order to employee", [this](){return 1;});
-        parser.addCommand("View order", [this]()
+        parser.addCommand("View Order", [this]()
                           {
-            IOhandler<int> inthandler("order id: ");
-            bool correct_id= false;
-            int id;
-            do{
-                    list_orders();
-                    id = inthandler.getInput();
-                    correct_id = id_valid_order(id);
-                } while(!correct_id);
-                std::cout << get_order(id);
+            std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+           // std::cout << "Orders: \n";
+            cmdParser<int> ordParser;
+            ordParser.setContext("Select order to view");
+            for (auto const &[key, val] : orders)
+            {
+                string ord_id = to_string(val->orderid);
+                string ord_name = val->client->client_name;
+                string ord_date = chrono_to_string(val->date_created);
+                ordParser.addCommand("ID: "+ord_id+" Client: "+ord_name+"\n   Date: "+ord_date+"\n   "+ dispCompStatus(val->compl_status),[this,key](){
+                    std::cout << get_order(key);
+                    return 1;
+                });
+            }
+            ordParser.loopCommands();
                 return 1; });
         parser.addCommand("Edit Order", [this]()
                           {
-            list_orders();
-            IOhandler<int> inthandler("Order id");
-            int id;
-            id = inthandler.getInput();
-            bool valid = id_valid_order(id);
-            while(!valid){
-                std::cout << "Invalid Order ID\n";
-                id = inthandler.getInput();
-                valid = id_valid_order(id);
-            
+                        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+           // std::cout << "Orders: \n";
+            cmdParser<int> ordParser;
+            ordParser.setContext("Select order to edit");
+            for (auto const &[key, val] : orders)
+            {
+                string ord_id = to_string(val->orderid);
+                string ord_name = val->client->client_name;
+                string ord_date = chrono_to_string(val->date_created);
+                ordParser.addCommand("ID: "+ord_id+" Client: "+ord_name+"\n   Date: "+ord_date+"\n   "+ dispCompStatus(val->compl_status),[this,key](){
+                    //std::cout << get_order(key);
+                    view_receptionsit_edit_order(key);
+                    return 1;
+                });
             }
-            view_receptionsit_edit_order(id);
+            ordParser.loopCommands(false);
              return 1; });
-        parser.addCommand("list Clients",[this](){list_clients();return 1;});
-        parser.addCommand("list client orders",[this](){
+        parser.addCommand("List Clients",[this](){list_clients();return 1;});
+        parser.addCommand("List Client Orders",[this](){
                 int id = selectCustomerId();
             if(id == -1){
                 return 1;
@@ -621,6 +720,13 @@ public:
             IOhandler<string> strhandler("Client name: ");
             auto client = std::make_shared<Client>(strhandler.getInput());
             client_manager->addClient(client);
+            return 1;
+        });
+        parser.addCommand("Submit Report",[this](){
+            int repid = dynamic_cast<Receptionist*>(CurrentUser)->submitReport();
+
+            std::cout << "Submitted Report: \n" << get_report_receptionist(repid);
+            
             return 1;
         });
 
