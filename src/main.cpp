@@ -149,7 +149,7 @@ int main() {
 		std::cout << "Date created: " << reportPtr->date_created << "\n";
 	}
 
-	
+
 	receptreport_manager->deleteReport(receptreportid);
 	std::cout << "Removed receptionist's report." << "\n";
 	std::cout << "Receptionist reports that exist: " << "\n";
