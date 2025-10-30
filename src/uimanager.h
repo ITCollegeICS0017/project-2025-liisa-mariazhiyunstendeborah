@@ -294,7 +294,7 @@ public:
         string created = chrono_to_string(report->date_created);
         repstr += "ID: " + repid + " Employee ID: " + cid + "\n";
         repstr += "Creation date: " + created + "\n";
-        repstr += "Materials Consumed: \n";
+        repstr += "Completed Orders: \n";
 
         for (const auto& [key, val] : report->compl_orders) {
             repstr += get_order(key);
@@ -527,7 +527,7 @@ public:
         parser.addCommand("List Photographer Reports",[this](){
             std::cout << "Photographer reports that exist: " << "\n";
             for (const auto& [reportid, reportPtr] : dynamic_cast<Administrator*>(CurrentUser)->listPhotoReports()) {
-                std::cout << get_report_photographer(reportid);
+                std::cout << get_report_photographer(reportid) <<"\n";
             }
             return 1;});
         parser.addCommand("List Materials",[this](){
