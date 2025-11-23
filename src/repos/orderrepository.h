@@ -1,9 +1,8 @@
-#ifndef ORDERMANAGER_H
-#define ORDERMANAGER_H
+#ifndef ORDERREPOSITORY_H
+#define ORDERREPOSITORY_H
 
 #include <stdexcept>
-#include <map>
-#include <memory>
+#include "interfaces/iorderrepository.h"
 #include "core/order.h"
 
 class OrderManager {
@@ -12,10 +11,6 @@ class OrderManager {
         int next_id = 1;
 
     public:
-        OrderManager() = default;
-
-        ~OrderManager() = default;
-
         Order* findOrder(int orderid);
 
         const std::map<int, std::shared_ptr<Order>>& getOrders()  const;
