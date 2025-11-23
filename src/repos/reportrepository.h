@@ -1,8 +1,7 @@
-#ifndef REPORTMANAGER_H
-#define REPORTMANAGER_H
+#ifndef REPORTREPOSITORY_H
+#define REPORTREPOSITORY_H
 
-#include <map>
-#include <memory>
+#include "interfaces/ireportrepository.h"
 #include "core/reports.h"
 
 template <typename ReportT>
@@ -12,9 +11,6 @@ class ReportManager {
 
     public:
 		std::map<int, std::shared_ptr<ReportT>> reports;
-
-        ReportManager() = default;
-        virtual ~ReportManager() = default;
 
         ReportT* findReport(int reportid);
 

@@ -1,4 +1,4 @@
-#include "materialmanager.h"
+#include "materialrepository.h"
 
 std::vector<std::shared_ptr<Material>>& MaterialManager::getMaterials() {
     return materials;
