@@ -1,6 +1,8 @@
 CXX=g++
-CXXFLAGS=-g -Wall -Wextra -std=c++20 -Wno-unused-parameter
-SRC=$(wildcard src/*.cpp)
+CXXFLAGS=-g -Wall -Wextra -std=c++20 -Wno-unused-parameter -Isrc
+
+#Find all .cpp files in src and its subdirectories
+SRC=$(wildcard src/*.cpp src/core/*.cpp src/managers/*.cpp src/utilities/*.cpp src/ui/*.cpp)
 OBJ=$(SRC:.cpp=.o)
 BIN=app
 
@@ -18,4 +20,10 @@ test: $(BIN) tests/test_basic.sh
 	bash tests/test_basic.sh
 
 clean:
-	rm -f $(BIN) src/*.o
+	rm -f $(BIN) $(OBJ)
+
+# Distclean removes any extra generated files like object files in subdirectories
+.PHONY: distclean
+distclean:
+	-rm -f $(BIN) $(OBJ)
+	-find src -type f -name '*.o' -delete || true

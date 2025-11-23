@@ -1,12 +1,12 @@
 #ifndef UIMANAGER_H
 #define UIMANAGER_H
 #include "ui.h"
-#include "ordermanager.h"
-#include "clientmanager.h"
-#include "employeemanager.h"
-#include "ordermanager.h"
-#include "reportmanager.h"
-#include "materialmanager.h"
+#include "managers/ordermanager.h"
+#include "managers/clientmanager.h"
+#include "managers/employeemanager.h"
+#include "managers/ordermanager.h"
+#include "managers/reportmanager.h"
+#include "managers/materialmanager.h"
 
 #include <format>
 #include <functional>

@@ -1,11 +1,11 @@
-#include "material.h"
-#include "client.h"
-#include "clientmanager.h"
-#include "employees.h"
-#include "order.h"
-#include "employeemanager.h"
-#include "uimanager.h"
-#include "clocks.h"
+#include "core/material.h"
+#include "core/client.h"
+#include "managers/clientmanager.h"
+#include "core/employees.h"
+#include "core/order.h"
+#include "managers/employeemanager.h"
+#include "ui/uimanager.h"
+#include "utilities/clocks.h"
 
 #include <iostream>
 

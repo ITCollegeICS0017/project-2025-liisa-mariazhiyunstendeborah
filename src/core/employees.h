@@ -8,11 +8,11 @@
 #include "order.h"
 #include "material.h"
 #include "reports.h"
-#include "ordermanager.h"
-#include "reportmanager.h"
-#include "materialmanager.h"
-#include "clocks.h"
-#include "employeemanager.h"
+#include "managers/ordermanager.h"
+#include "managers/reportmanager.h"
+#include "managers/materialmanager.h"
+#include "utilities/clocks.h"
+#include "managers/employeemanager.h"
 
 class OrderManager;
 class IClock;

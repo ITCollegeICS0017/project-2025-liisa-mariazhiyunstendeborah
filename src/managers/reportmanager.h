@@ -3,7 +3,7 @@
 
 #include <map>
 #include <memory>
-#include "reports.h"
+#include "core/reports.h"
 
 template <typename ReportT>
 class ReportManager {
