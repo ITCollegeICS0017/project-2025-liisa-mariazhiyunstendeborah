@@ -7,6 +7,9 @@
 #include "managers/ordermanager.h"
 #include "managers/reportmanager.h"
 #include "managers/materialmanager.h"
+#include "employees/photographer.h"
+#include "employees/receptionist.h"
+#include "employees/administrator.h"
 
 #include <format>
 #include <functional>
