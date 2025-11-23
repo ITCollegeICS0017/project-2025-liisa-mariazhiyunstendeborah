@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <map>
 #include <memory>
-#include "client.h"
+#include "core/client.h"
 
 class ClientManager {
     private:

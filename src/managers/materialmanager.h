@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include "material.h"
+#include "core/material.h"
 
 class MaterialManager {
     private:

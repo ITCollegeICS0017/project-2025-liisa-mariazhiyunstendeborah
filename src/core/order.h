@@ -5,8 +5,8 @@
 #include <memory>
 #include <chrono>
 #include "client.h"
-#include "clocks.h"
-#include "constantdefs.h"
+#include "utilities/clocks.h"
+#include "utilities/constantdefs.h"
 
 class Order {
 public:
