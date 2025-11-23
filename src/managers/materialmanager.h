@@ -1,9 +1,8 @@
 #ifndef MATERIALMANAGER_H
 #define MATERIALMANAGER_H
 
-#include <vector>
-#include <memory>
 #include <algorithm>
+#include "interfaces/imaterialmanager.h"
 #include "core/material.h"
 
 class MaterialManager {
@@ -11,17 +10,13 @@ class MaterialManager {
         std::vector<std::shared_ptr<Material>> materials;
 
     public:
-        MaterialManager() = default;
+        std::vector<std::shared_ptr<Material>>& getMaterials();
 
-        ~MaterialManager() = default;
+        void addMaterial(std::shared_ptr<Material> material);
 
-        std::vector<std::shared_ptr<Material>>& getMaterials() ;
+        void editMaterial(const std::shared_ptr<Material>& updated_mat);
 
-        void addMaterial(std::shared_ptr<Material> material) ;
-
-        void editMaterial(const std::shared_ptr<Material>& updated_mat) ;
-
-        void deleteMaterial(std::string mat_type) ;
+        void deleteMaterial(std::string mat_type);
 
         Material* findMaterialbyType(std::string mat_type);
 };

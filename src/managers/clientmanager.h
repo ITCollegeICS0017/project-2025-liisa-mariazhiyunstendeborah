@@ -2,18 +2,14 @@
 #define CLIENTMANAGER_H
 
 #include <stdexcept>
-#include <map>
-#include <memory>
+#include "interfaces/iclientmanager.h"
 #include "core/client.h"
 
-class ClientManager {
+class ClientManager : public IClientManager{
     private:
         std::map<int, std::shared_ptr<Client>> clients;
         int next_id = 1;
     public:
-        ClientManager() = default;
-        virtual ~ClientManager() = default;
-
         const std::map<int, std::shared_ptr<Client>>& getClients() const;
 
         Client* findClient(int client_id);
