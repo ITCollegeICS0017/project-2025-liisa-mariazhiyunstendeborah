@@ -1,7 +1,7 @@
 #ifndef ADMINISTRATOR_H
 #define ADMINISTRATOR_H
 
-#include "core/employees.h"
+#include "core/employee.h"
 
 class Administrator: public Employee {
     private:

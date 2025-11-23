@@ -1,7 +1,7 @@
 #include "core/material.h"
 #include "core/client.h"
 #include "managers/clientmanager.h"
-#include "core/employees.h"
+#include "core/employee.h"
 #include "employees/administrator.h"
 #include "employees/receptionist.h"
 #include "employees/photographer.h"
