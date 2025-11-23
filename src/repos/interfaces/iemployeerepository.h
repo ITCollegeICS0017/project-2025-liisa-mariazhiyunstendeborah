@@ -1,5 +1,5 @@
-#ifndef IEMPLOYEEMANAGER_H
-#define IEMPLOYEEMANAGER_H
+#ifndef IEMPLOYEEREPOSITORY_H
+#define IEMPLOYEEREPOSITORY_H
 
 #include <map>
 #include <memory>

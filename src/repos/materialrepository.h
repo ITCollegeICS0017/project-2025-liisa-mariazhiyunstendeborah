@@ -1,8 +1,8 @@
-#ifndef MATERIALMANAGER_H
-#define MATERIALMANAGER_H
+#ifndef MATERIALREPOSITORY_H
+#define MATERIALREPOSITORY_H
 
 #include <algorithm>
-#include "interfaces/imaterialmanager.h"
+#include "interfaces/imaterialrepository.h"
 #include "core/material.h"
 
 class MaterialManager {

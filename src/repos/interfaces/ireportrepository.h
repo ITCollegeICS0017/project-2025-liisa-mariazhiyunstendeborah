@@ -1,6 +1,8 @@
-#ifndef IREPORTMANAGER_H
-#define IREPORTMANAGER_H
+#ifndef IREPORTREPOSITORY_H
+#define IREPORTREPOSITORY_H
 
+#include <map>
+#include <memory>
 
 template <typename ReportT>
 class IReportManager {

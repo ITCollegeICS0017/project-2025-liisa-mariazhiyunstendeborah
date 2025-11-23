@@ -1,8 +1,8 @@
-#ifndef EMPLOYEEMANAGER_H
-#define EMPLOYEEMANAGER_H
+#ifndef EMPLOYEEREPOSITORY_H
+#define EMPLOYEEREPOSITORY_H
 
 #include <stdexcept>
-#include "interfaces/iemployeemanager.h"
+#include "interfaces/iemployeerepository.h"
 #include "core/employee.h"
 
 class EmployeeManager {

@@ -1,5 +1,5 @@
-#ifndef ICLIENTMANAGER_H
-#define ICLIENTMANAGER_H
+#ifndef ICLIENTREPOSITORY_H
+#define ICLIENTREPOSITORY_H
 
 #include <map>
 #include <memory>

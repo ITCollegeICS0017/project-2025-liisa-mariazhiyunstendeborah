@@ -1,8 +1,8 @@
-#ifndef ORDERMANAGER_H
-#define ORDERMANAGER_H
+#ifndef ORDERREPOSITORY_H
+#define ORDERREPOSITORY_H
 
 #include <stdexcept>
-#include "interfaces/iordermanager.h"
+#include "interfaces/iorderrepository.h"
 #include "core/order.h"
 
 class OrderManager {

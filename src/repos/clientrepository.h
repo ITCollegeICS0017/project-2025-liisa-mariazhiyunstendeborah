@@ -1,8 +1,8 @@
-#ifndef CLIENTMANAGER_H
-#define CLIENTMANAGER_H
+#ifndef CLIENTREPOSITORY_H
+#define CLIENTREPOSITORY_H
 
 #include <stdexcept>
-#include "interfaces/iclientmanager.h"
+#include "interfaces/iclientrepository.h"
 #include "core/client.h"
 
 class ClientManager : public IClientManager{

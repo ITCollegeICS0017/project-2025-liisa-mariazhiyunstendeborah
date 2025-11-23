@@ -1,7 +1,7 @@
-#ifndef REPORTMANAGER_H
-#define REPORTMANAGER_H
+#ifndef REPORTREPOSITORY_H
+#define REPORTREPOSITORY_H
 
-#include "interfaces/ireportmanager.h"
+#include "interfaces/ireportrepository.h"
 #include "core/reports.h"
 
 template <typename ReportT>

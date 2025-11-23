@@ -1,5 +1,5 @@
-#ifndef IORDERMANAGER_H
-#define IORDERMANAGER_H
+#ifndef IORDERREPOSITORY_H
+#define IORDERREPOSITORY_H
 
 #include <map>
 #include <memory>
