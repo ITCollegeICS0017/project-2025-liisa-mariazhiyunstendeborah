@@ -1,7 +1,7 @@
 #ifndef RECEPTIONIST_H
 #define RECEPTIONIST_H
 
-#include "core/employees.h"
+#include "core/employee.h"
 
 class Receptionist: public Employee {
     private:

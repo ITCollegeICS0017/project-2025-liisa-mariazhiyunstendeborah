@@ -1,7 +1,7 @@
 #ifndef PHOTOGRAPHER_H
 #define PHOTOGRAPHER_H
 
-#include "core/employees.h"
+#include "core/employee.h"
 
 class Photographer: public Employee {
     private:
