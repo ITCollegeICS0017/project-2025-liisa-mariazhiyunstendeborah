@@ -1,19 +1,19 @@
 #ifndef PHOTOGRAPHER_H
 #define PHOTOGRAPHER_H
 
-#include "employees.h"
+#include "core/employees.h"
 
 class Photographer: public Employee {
     private:
         IClock& clock;
-        InMemoryMaterialManager* material_manager;
+        MaterialManager* material_manager;
         PhotoReportManager* photoreport_manager;
-        InMemoryMaterialManager* consumed_materials;
+        MaterialManager* consumed_materials;
 
         std::map<std::shared_ptr<Material>, int> getConsumedMaterials();
     public:
-        Photographer(InMemoryOrderManager* order_manager, std::string emp_name, IClock& clock, InMemoryMaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), clock(clock), material_manager(material_manager), photoreport_manager(photoreport_manager) {
-            this->consumed_materials = new InMemoryMaterialManager();
+        Photographer(OrderManager* order_manager, std::string emp_name, IClock& clock, MaterialManager* material_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), clock(clock), material_manager(material_manager), photoreport_manager(photoreport_manager) {
+            this->consumed_materials = new MaterialManager();
  }
 
         std::string getEmpType();

@@ -1,16 +1,16 @@
 #ifndef ADMINISTRATOR_H
 #define ADMINISTRATOR_H
 
-#include "employees.h"
+#include "core/employees.h"
 
 class Administrator: public Employee {
     private:
-        InMemoryMaterialManager* material_manager;
+        MaterialManager* material_manager;
         ReceptReportManager* receptreport_manager;
         PhotoReportManager* photoreport_manager;
 
     public:
-        Administrator(InMemoryOrderManager* order_manager, std::string emp_name, InMemoryMaterialManager* material_manager, ReceptReportManager* receptreport_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), material_manager(material_manager), receptreport_manager(receptreport_manager), photoreport_manager(photoreport_manager) { }
+        Administrator(OrderManager* order_manager, std::string emp_name, MaterialManager* material_manager, ReceptReportManager* receptreport_manager, PhotoReportManager* photoreport_manager) : Employee(order_manager, emp_name), material_manager(material_manager), receptreport_manager(receptreport_manager), photoreport_manager(photoreport_manager) { }
 
         std::string getEmpType();
 

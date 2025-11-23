@@ -21,13 +21,13 @@
 
 class Employee {
     protected:
-        InMemoryOrderManager* order_manager;
+        OrderManager* order_manager;
 
     public:
         int emp_id = 0;
         std::string emp_name;
 
-        Employee(InMemoryOrderManager* order_manager, std::string emp_name) : order_manager(order_manager), emp_name(emp_name) { }
+        Employee(OrderManager* order_manager, std::string emp_name) : order_manager(order_manager), emp_name(emp_name) { }
 
         virtual std::string getEmpType() = 0;
 
