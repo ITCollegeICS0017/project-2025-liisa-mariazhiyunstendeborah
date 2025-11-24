@@ -5,27 +5,31 @@ std::string Administrator::getEmpType() {
 }
 
 std::map<int, std::shared_ptr<ReceptReport>> Administrator::listReceptReports() {
-    return receptreport_manager->reports;
+    return receptreport_repository->reports;
 }
 
 std::map<int, std::shared_ptr<PhotoReport>> Administrator::listPhotoReports() {
-    return photoreport_manager->reports;
+    return photoreport_repository->reports;
 }
 
 std::vector<std::shared_ptr<Material>> Administrator::listMaterials(){
-    return material_manager->getMaterials();
+    return material_repository->getMaterials();
 }
 
+//checks if the material exists in the material_repository. 
+//If it does not exist, material is created using the mat_type and entered quantity.
+//If the specified material does exist, its quantity is increased by the input quantity.
 void Administrator::addMaterial(std::string mat_type, unsigned int quantity){
-    auto mat = material_manager->findMaterialbyType(mat_type);
+    auto mat = material_repository->findMaterialbyType(mat_type);
     if (mat != nullptr) {
         mat->stock_qty += quantity;
     } else {
     auto material = std::make_shared<Material>(mat_type, quantity);
-    material_manager->addMaterial(material);
+    material_repository->addMaterial(material);
     }
 }
 
-void Administrator::removeMaterial(std::string mat_type){
-    material_manager->deleteMaterial(mat_type);
+//deletes a material entirely.
+void Administrator::deleteMaterial(std::string mat_type){
+    material_repository->deleteMaterial(mat_type);
 }

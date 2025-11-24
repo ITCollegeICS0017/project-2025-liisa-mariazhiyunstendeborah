@@ -5,10 +5,10 @@
 
 class Client {
     public:
+        //the real client_id will be set when a client is added to the clientrepository
         int client_id = 0;
         std::string client_name;
-        //any other data we'd expect to get from one and
-        //want to store in a hypothetical database
+        
 
         Client(std::string client_name) : client_name(client_name) { }
 

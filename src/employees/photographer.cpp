@@ -4,6 +4,7 @@ std::string Photographer::getEmpType() {
     return "Photographer";
 }
 
+//checks that the order to be changed exists
 void Photographer::switchOrderStatus(Order* changedorder, CompletionStatus compl_status){
     if (changedorder != nullptr) {
         changedorder->compl_status = compl_status;
@@ -12,8 +13,15 @@ void Photographer::switchOrderStatus(Order* changedorder, CompletionStatus compl
     }
 }
 
+//Checks if entered material exists in global material repository
+//if the material does not exist, throws an error;
+//if the material's stock quantity is less than the quantity to be consumed, throws an error;
+//if material found, the consumed quantity is subtracted from the stock quantity.
+//Next, checks that the material does not exist in the photographer-specific consumed_materials repository,
+//if the material exists in consumed_materials, consumed quantity increases by the input quantity;
+//if the material does not exist in consumed_materials, it is created with the input quantity.
 void Photographer::consumeMaterial(std::string mat_type, unsigned int quantity){
-    auto material = material_manager->findMaterialbyType(mat_type);
+    auto material = material_repository->findMaterialbyType(mat_type);
     if (!material) {
         throw std::invalid_argument("Material not found!");
     } else if (material->stock_qty < quantity) {
@@ -28,6 +36,7 @@ void Photographer::consumeMaterial(std::string mat_type, unsigned int quantity){
     }
 }
 
+//returns map of photographer-specific consumed materials
 std::map<std::shared_ptr<Material>, int> Photographer::getConsumedMaterials() {
     std::map<std::shared_ptr<Material>, int> ret;
     auto cons_mats = consumed_materials->getMaterials();
@@ -37,11 +46,13 @@ std::map<std::shared_ptr<Material>, int> Photographer::getConsumedMaterials() {
     return ret;
 }
 
+//uses getConsumedMaterials to create the photographer report
 int Photographer::submitReport(){
     auto report = std::make_shared<PhotoReport>(emp_id, clock, getConsumedMaterials());
-    return photoreport_manager->addReport(report);
+    return photoreport_repository->addReport(report);
 }
 
+//custom destructor to make sure consumed_materials is destroyed
 Photographer::~Photographer() {
     delete this->consumed_materials;
 }

@@ -16,22 +16,22 @@
 #include <iostream>
 
 
-//Note: most likely, when there are no employees, the
-//first employee should always be the administrator
-
+//abstract class for employees
 class Employee {
     protected:
-        OrderManager* order_manager;
+        OrderRepository* order_repository;
 
     public:
+        //employee id set to a valid value once added to the employee repository
         int emp_id = 0;
         std::string emp_name;
 
-        Employee(OrderManager* order_manager, std::string emp_name) : order_manager(order_manager), emp_name(emp_name) { }
-
-        virtual std::string getEmpType() = 0;
+        Employee(OrderRepository* order_repository, std::string emp_name) : order_repository(order_repository), emp_name(emp_name) { }
 
         virtual ~Employee() = default;
+
+        //virtual function to get an Employee's type
+        virtual std::string getEmpType() = 0;
 };
 
 #endif

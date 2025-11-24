@@ -17,7 +17,7 @@
 #include <chrono>
 #include <memory>
 
-//	UImanager* uimanager = new UImanager(order_manager, client_manager, employee_manager, photoreport_manager, receptreport_manager, material_manager);
+//	UImanager* uimanager = new UImanager(order_repository, client_repository, employee_repository, photoreport_repository, receptreport_repository, material_repository);
 
 /*
 enum CompletionStatus
@@ -32,24 +32,24 @@ enum CompletionStatus
 class UImanager
 {
 private:
-    OrderManager *order_manager;
-    ReceptReportManager *receptreport_manager;
-    PhotoReportManager *photoreport_manager;
-    EmployeeManager *employee_manager;
-    MaterialManager *material_manager;
-    ClientManager *client_manager;
+    OrderRepository *order_repository;
+    ReceptReportRepository *receptreport_repository;
+    PhotoReportRepository *photoreport_repository;
+    EmployeeRepository *employee_repository;
+    MaterialRepository *material_repository;
+    ClientRepository *client_repository;
 
 public:
     Employee *CurrentUser;
     int emp_id;
-    UImanager(OrderManager *omanager, ClientManager *climanager, EmployeeManager *empmanager, PhotoReportManager *prepmanager, ReceptReportManager *repmanager, MaterialManager *matmanager)
+    UImanager(OrderRepository *omanager, ClientRepository *climanager, EmployeeRepository *empmanager, PhotoReportRepository *prepmanager, ReceptReportRepository *repmanager, MaterialRepository *matmanager)
     {
-        order_manager = omanager;
-        receptreport_manager = repmanager;
-        photoreport_manager = prepmanager;
-        employee_manager = empmanager;
-        material_manager = matmanager;
-        client_manager = climanager;
+        order_repository = omanager;
+        receptreport_repository = repmanager;
+        photoreport_repository = prepmanager;
+        employee_repository = empmanager;
+        material_repository = matmanager;
+        client_repository = climanager;
     }
     string curr_username()
     {
@@ -129,7 +129,7 @@ public:
          IOhandler<int> inthandler("User id");
             cmdParser<int> clientParser;
             clientParser.setContext("Select Client");
-            std::map<int, std::shared_ptr<Client>> clients = client_manager->getClients();
+            std::map<int, std::shared_ptr<Client>> clients = client_repository->getClients();
             for (auto const &[key, val] : clients)
                 {
                     clientParser.addCommand((string(val->client_name) + " - id: " + to_string(key)), [key](){
@@ -140,7 +140,7 @@ public:
     }
     void view_login()
     {
-        map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+        map<int, std::shared_ptr<Employee>> employees = employee_repository->getEmployees();
 
         cmdParser<int> userParser;
         
@@ -150,7 +150,7 @@ public:
             string role = val->getEmpType();
 
             userParser.addCommand("id - " + uid + " " + uname + " Role - " + role,[this,key](){
-                CurrentUser = employee_manager->findEmployee(key);
+                CurrentUser = employee_repository->findEmployee(key);
                 emp_id = key; 
                 return 1;
             });
@@ -170,7 +170,7 @@ public:
                 id = inthandler.getInput();
                   try
                     {
-                CurrentUser = employee_manager->findEmployee(id);
+                CurrentUser = employee_repository->findEmployee(id);
                 if (CurrentUser != nullptr){
                     id_in_range = true; 
                     emp_id = id; 
@@ -194,7 +194,7 @@ public:
 
         userParser.addCommand("Using name", [this, &userParser]()
                               { 
-            map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+            map<int, std::shared_ptr<Employee>> employees = employee_repository->getEmployees();
             bool logged_in = false;
             while(!logged_in){
                 list_users();
@@ -205,7 +205,7 @@ public:
                         if( (string)val->emp_name == name){
                             try
                             {
-                            CurrentUser = employee_manager->findEmployee(key);
+                            CurrentUser = employee_repository->findEmployee(key);
                             if (CurrentUser != nullptr){
                                 logged_in = true;
                                 emp_id = key;
@@ -229,7 +229,7 @@ public:
     }
     void list_users()
     {
-        map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+        map<int, std::shared_ptr<Employee>> employees = employee_repository->getEmployees();
         std::cout << "Employees: \n";
         for (auto const &[key, val] : employees)
         {
@@ -240,7 +240,7 @@ public:
     }
     string get_order(int id)
     {
-        Order *order = order_manager->findOrder(id);
+        Order *order = order_repository->findOrder(id);
         string orderstr = "";
         if (order == nullptr)
         {
@@ -274,7 +274,7 @@ public:
     }
     string get_report_photographer(int report_id){
         string repstr = "";
-        auto report = photoreport_manager->findReport(report_id);
+        auto report = photoreport_repository->findReport(report_id);
         string repid = to_string(report->reportid);
         string cid = to_string(report->creator_id);
         string created = chrono_to_string(report->date_created);
@@ -291,7 +291,7 @@ public:
     }
     string get_report_receptionist(int report_id){
         string repstr = "";
-        auto report = receptreport_manager->findReport(report_id);
+        auto report = receptreport_repository->findReport(report_id);
         string repid = to_string(report->reportid);
         string cid = to_string(report->creator_id);
         string created = chrono_to_string(report->date_created);
@@ -307,7 +307,7 @@ public:
     }
     bool id_valid_order(int id)
     {
-        Order *order = order_manager->findOrder(id);
+        Order *order = order_repository->findOrder(id);
         if (order != nullptr)
         {
             return true;
@@ -316,7 +316,7 @@ public:
     }
     bool id_valid_user(int id)
     {
-        Employee *emp = employee_manager->findEmployee(id);
+        Employee *emp = employee_repository->findEmployee(id);
         if (emp != nullptr)
         {
             return true;
@@ -324,7 +324,7 @@ public:
         return false;
     }
     void list_clients(){
-         std::map<int, std::shared_ptr<Client>> clients = client_manager->getClients();
+         std::map<int, std::shared_ptr<Client>> clients = client_repository->getClients();
             for (auto const &[key, val] : clients)
                 {
                     std::cout << "Client ID: " << key <<" Client name: " << val->client_name << "\n"; 
@@ -333,7 +333,7 @@ public:
 
     void list_orders()
     {
-        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::map<int, std::shared_ptr<Order>> orders = order_repository->getOrders();
         std::cout << "Orders: \n";
         for (auto const &[key, val] : orders)
         {
@@ -353,7 +353,7 @@ public:
         }
     }
     void list_orders_client_id(int id){
-        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::map<int, std::shared_ptr<Order>> orders = order_repository->getOrders();
         std::cout << "Orders: \n";
         for (auto const &[key, val] : orders)
         {
@@ -365,7 +365,7 @@ public:
     }
     void list_orders_emp_id(int id)
     {
-        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+        std::map<int, std::shared_ptr<Order>> orders = order_repository->getOrders();
         std::cout << "Orders: \n";
         for (auto const &[key, val] : orders)
         {
@@ -376,7 +376,7 @@ public:
         }
     }
         std::map<int, std::shared_ptr<Order>> get_orders_emp_id(int id){
-            std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+            std::map<int, std::shared_ptr<Order>> orders = order_repository->getOrders();
             std::map<int, std::shared_ptr<Order>> emporders;
             std::cout << "Orders: \n";
             for (auto const &[key, val] : orders)
@@ -391,7 +391,7 @@ public:
         }
     int useridByName(string name)
     {
-        map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+        map<int, std::shared_ptr<Employee>> employees = employee_repository->getEmployees();
         for (auto const &[key, val] : employees)
         {
             if ((string)val->emp_name == name)
@@ -403,7 +403,7 @@ public:
     }
     void view_photographer_edit_order(int id){
          cmdParser<int> parser;
-        Order *order = order_manager->findOrder(id);
+        Order *order = order_repository->findOrder(id);
         function<void()> updateheader = [this, id, &parser]()
         {
             string header = "editing order [" + to_string(id) + "]";
@@ -462,7 +462,7 @@ public:
         return 1;});
 
          parser.addCommand("Consume materials",[this](){
-            std::vector<std::shared_ptr<Material>> materials = material_manager->getMaterials();
+            std::vector<std::shared_ptr<Material>> materials = material_repository->getMaterials();
             cmdParser<string> matparser;
             matparser.setContext("Select Material");
 
@@ -550,7 +550,7 @@ public:
                 string stock = to_string(material->stock_qty);
                 matparser.addCommand( mat + " Quantity: " + stock,[mat,material,this]()
                 {
-                    dynamic_cast<Administrator*>(CurrentUser)->removeMaterial(material->mat_type);
+                    dynamic_cast<Administrator*>(CurrentUser)->deleteMaterial(material->mat_type);
                     return mat;
                 } );
             }
@@ -586,7 +586,7 @@ public:
      void view_receptionsit_edit_order(int id)
     {
         cmdParser<int> parser;
-        Order *order = order_manager->findOrder(id);
+        Order *order = order_repository->findOrder(id);
         function<void()> updateheader = [this, id, &parser]()
         {
             string header = "editing order [" + to_string(id) + "]";
@@ -600,7 +600,7 @@ public:
             IOhandler<int> inthandler("Enter Photographer ID");
             cmdParser<int> Photographers;
             Photographers.setContext("choose a photographer");
-            map<int, std::shared_ptr<Employee>> employees = employee_manager->getEmployees();
+            map<int, std::shared_ptr<Employee>> employees = employee_repository->getEmployees();
             for (auto const &[key, val] : employees)
                 {
                     if( (string)val->getEmpType() == "Photographer"){
@@ -643,7 +643,7 @@ public:
         // parser.addCommand("assign order to employee", [this](){return 1;});
         parser.addCommand("View Order", [this]()
                           {
-            std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+            std::map<int, std::shared_ptr<Order>> orders = order_repository->getOrders();
            // std::cout << "Orders: \n";
             cmdParser<int> ordParser;
             ordParser.setContext("Select order to view");
@@ -661,7 +661,7 @@ public:
                 return 1; });
         parser.addCommand("Edit Order", [this]()
                           {
-                        std::map<int, std::shared_ptr<Order>> orders = order_manager->getOrders();
+                        std::map<int, std::shared_ptr<Order>> orders = order_repository->getOrders();
            // std::cout << "Orders: \n";
             cmdParser<int> ordParser;
             ordParser.setContext("Select order to edit");
@@ -695,7 +695,7 @@ public:
 
           //// shared_ptr<Client> client = _client;
             cmdParser<Service> srvParser;
-            std::shared_ptr<Client> client(client_manager->findClient(cli_id), [](Client*) {});
+            std::shared_ptr<Client> client(client_repository->findClient(cli_id), [](Client*) {});
 
             srvParser.setContext("Select service");
             srvParser.addCommand("Photo printing",[](){return Service::Photo_printing;});
@@ -722,7 +722,7 @@ public:
         parser.addCommand("Add Client",[this](){
             IOhandler<string> strhandler("Client name: ");
             auto client = std::make_shared<Client>(strhandler.getInput());
-            client_manager->addClient(client);
+            client_repository->addClient(client);
             return 1;
         });
         parser.addCommand("Submit Report",[this](){
@@ -793,13 +793,13 @@ int view_main()
 };
 /*
 int main(){
-    OrderManager* order_manager = new OrderManager();
-    ReceptReportManager* receptreport_manager = new ReceptReportManager();
-    PhotoReportManager* photoreport_manager = new PhotoReportManager();
-    EmployeeManager* employee_manager = new EmployeeManager();
-    MaterialManager* material_manager = new MaterialManager();
-    ClientManager* client_manager = new ClientManager();
-    UImanager* uimanager = new UImanager(order_manager, client_manager, employee_manager, photoreport_manager, receptreport_manager, material_manager);
+    OrderRepository* order_repository = new OrderRepository();
+    ReceptReportRepository* receptreport_repository = new ReceptReportRepository();
+    PhotoReportRepository* photoreport_repository = new PhotoReportRepository();
+    EmployeeRepository* employee_repository = new EmployeeRepository();
+    MaterialRepository* material_repository = new MaterialRepository();
+    ClientRepository* client_repository = new ClientRepository();
+    UImanager* uimanager = new UImanager(order_repository, client_repository, employee_repository, photoreport_repository, receptreport_repository, material_repository);
     uimanager->view_main();
 }
 l*/

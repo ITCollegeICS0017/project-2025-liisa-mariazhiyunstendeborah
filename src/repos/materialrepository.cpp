@@ -1,11 +1,10 @@
 #include "materialrepository.h"
 
-std::vector<std::shared_ptr<Material>>& MaterialManager::getMaterials() {
+std::vector<std::shared_ptr<Material>>& MaterialRepository::getMaterials() {
     return materials;
-    //E: ?
 }
 
-void MaterialManager::addMaterial(std::shared_ptr<Material> material)  {
+void MaterialRepository::addMaterial(std::shared_ptr<Material> material)  {
     if (!findMaterialbyType(material->mat_type)) {
     materials.push_back(material);
     } else {
@@ -13,7 +12,7 @@ void MaterialManager::addMaterial(std::shared_ptr<Material> material)  {
     }
 }
 
-void MaterialManager::editMaterial(const std::shared_ptr<Material>& updated_mat)  {
+void MaterialRepository::editMaterial(const std::shared_ptr<Material>& updated_mat)  {
     if (!findMaterialbyType(updated_mat->mat_type)) {
         throw std::invalid_argument("Material not found!");
     } else {
@@ -26,7 +25,7 @@ void MaterialManager::editMaterial(const std::shared_ptr<Material>& updated_mat)
     }
 }
 
-void MaterialManager::deleteMaterial(std::string mat_type)  {
+void MaterialRepository::deleteMaterial(std::string mat_type)  {
     if (!findMaterialbyType(mat_type)) {
         throw std::invalid_argument("Material does not exist to be deleted!");
     } else {
@@ -34,7 +33,8 @@ void MaterialManager::deleteMaterial(std::string mat_type)  {
     }
 }
 
-Material* MaterialManager::findMaterialbyType(std::string mat_type) {
+//Upon not finding a material, returns a nullptr rather than return an error, so it's easier to use in other functions for checking if a material exists.
+Material* MaterialRepository::findMaterialbyType(std::string mat_type) {
     for (const auto& material : materials) {
         if (material->mat_type == mat_type) {
             return material.get();

@@ -2,10 +2,12 @@
 #define MATERIALREPOSITORY_H
 
 #include <algorithm>
+#include <stdexcept>
 #include "interfaces/imaterialrepository.h"
 #include "core/material.h"
 
-class MaterialManager {
+//Material repository, performs CRUD operations, finds materials by their type
+class MaterialRepository : public IMaterialRepository{
     private:
         std::vector<std::shared_ptr<Material>> materials;
 

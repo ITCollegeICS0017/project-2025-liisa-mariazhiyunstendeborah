@@ -1,15 +1,16 @@
-#ifndef IMaterialManager_H
-#define IMaterialManager_H
+#ifndef IMaterialRepository_H
+#define IMaterialRepository_H
 
 #include <vector>
 #include <memory>
 
+//interface for MaterialRepository, CRUD operations and constructor/destructor
 class Material;
-class IMaterialManager {
+class IMaterialRepository {
     public:
-        IMaterialManager() = default;
+        IMaterialRepository() = default;
 
-        virtual ~IMaterialManager() = default;
+        virtual ~IMaterialRepository() = default;
 
         virtual void addMaterial(std::shared_ptr<Material> material) = 0;
 
