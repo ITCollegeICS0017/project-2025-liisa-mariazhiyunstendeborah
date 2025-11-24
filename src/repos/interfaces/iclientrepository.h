@@ -4,11 +4,12 @@
 #include <map>
 #include <memory>
 
+//interface for ClientRepository, CRUD operations and constructor/destructor
 class Client;
-class IClientManager {
+class IClientRepository {
     public:
-        IClientManager() = default;
-        virtual ~IClientManager() = default;
+        IClientRepository() = default;
+        virtual ~IClientRepository() = default;
 
         virtual int addClient(std::shared_ptr<Client> client) = 0;
 

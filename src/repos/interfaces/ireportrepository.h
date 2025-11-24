@@ -4,11 +4,12 @@
 #include <map>
 #include <memory>
 
+//Report repository, sets report ids, performs CRUD operations, finds reports by their id
 template <typename ReportT>
-class IReportManager {
+class IReportRepository {
     public:
-        IReportManager() = default;
-        virtual ~IReportManager() = default;
+        IReportRepository() = default;
+        virtual ~IReportRepository() = default;
 
         virtual int addReport(std::shared_ptr<ReportT> report) = 0;
 

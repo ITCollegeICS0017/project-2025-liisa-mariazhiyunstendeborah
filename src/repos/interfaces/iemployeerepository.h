@@ -4,10 +4,11 @@
 #include <map>
 #include <memory>
 
+//interface for EmployeeRepository, CRUD operations and constructor
 class Employee;
-class IEmployeeManager {
+class IEmployeeRepository {
     public:
-        IEmployeeManager() = default;
+        IEmployeeRepository() = default;
 
         virtual int addEmployee(std::shared_ptr<Employee> employee) = 0;
 

@@ -4,12 +4,13 @@
 #include <map>
 #include <memory>
 
+//interface for OrderRepository, CRUD operations and constructor/destructor
 class Order;
-class IOrderManager {
+class IOrderRepository {
     public:
-        IOrderManager() = default;
+        IOrderRepository() = default;
 
-        virtual ~IOrderManager() = default;
+        virtual ~IOrderRepository() = default;
 
         virtual int addOrder(std::shared_ptr<Order> order) = 0;
 

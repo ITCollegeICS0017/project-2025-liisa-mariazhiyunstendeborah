@@ -5,8 +5,9 @@
 #include "core/reports.h"
 
 template <typename ReportT>
-class ReportManager {
+class ReportRepository : public IReportRepository<ReportT> {
     protected:
+        //ids are set incrementally starting from next_id
         int next_id = 1;
 
     public:
@@ -22,8 +23,10 @@ class ReportManager {
 
         void deleteReport(int reportid);
 };
+
+//returns nullptr rather than an error, as that makes it easier to use it to check if a report exists
 template <typename ReportT>
-ReportT* ReportManager<ReportT>::findReport(int reportid) {
+ReportT* ReportRepository<ReportT>::findReport(int reportid) {
     auto iter = reports.find(reportid);
     if (iter != reports.end()) {
         return iter->second.get();
@@ -31,8 +34,10 @@ ReportT* ReportManager<ReportT>::findReport(int reportid) {
     return nullptr;
 }
 
+//checks if a report's default id has been changed, if so it sets the report's id to next_id (which is then incremented) and adds it to the report repository
+//if the above is false, throws an error
 template <typename ReportT>
-int ReportManager<ReportT>::addReport(std::shared_ptr<ReportT> report) {
+int ReportRepository<ReportT>::addReport(std::shared_ptr<ReportT> report) {
     if (report->reportid == 0) {
         int reportid = next_id++;
         report->reportid = reportid;
@@ -44,7 +49,7 @@ int ReportManager<ReportT>::addReport(std::shared_ptr<ReportT> report) {
 }
 
 template <typename ReportT>
-void ReportManager<ReportT>::editReport (int reportid, std::shared_ptr<ReportT> updatedReport) {
+void ReportRepository<ReportT>::editReport (int reportid, std::shared_ptr<ReportT> updatedReport) {
     if (!findReport(reportid)) {
         throw std::invalid_argument("Report not found!");
     } else {
@@ -53,19 +58,18 @@ void ReportManager<ReportT>::editReport (int reportid, std::shared_ptr<ReportT> 
 }
 
 template <typename ReportT>
-void ReportManager<ReportT>::deleteReport(int reportid) {
+void ReportRepository<ReportT>::deleteReport(int reportid) {
     if (!findReport(reportid)) {
         throw std::invalid_argument("Report does not exist to be deleted!");
     } else {
-    //E: e.g. if reportid not found
         reports.erase(reportid);
     }
 }
 
-class ReceptReportManager : public ReportManager<ReceptReport> {
+class ReceptReportRepository : public ReportRepository<ReceptReport> {
 };
 
-class PhotoReportManager : public ReportManager<PhotoReport> {
+class PhotoReportRepository : public ReportRepository<PhotoReport> {
 };
 
 #endif

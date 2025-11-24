@@ -1,7 +1,7 @@
 #include "orderrepository.h"
 
-
-Order* OrderManager::findOrder(int orderid) {
+//Upon not finding an order, returns a nullptr rather than return an error, so it's easier to use in other functions for checking if an order exists.
+Order* OrderRepository::findOrder(int orderid) {
     auto iter = orders.find(orderid);
     if (iter != orders.end()) {
         return iter->second.get();
@@ -9,11 +9,13 @@ Order* OrderManager::findOrder(int orderid) {
     return nullptr;
 }
 
-const std::map<int, std::shared_ptr<Order>>& OrderManager::getOrders()  const  {
+const std::map<int, std::shared_ptr<Order>>& OrderRepository::getOrders()  const  {
     return orders;
 }
 
-std::map<int, std::shared_ptr<Order>> OrderManager::getCompletedOrders()  const {
+//returns map of orders with the completed CompletionStatus in the repository, 
+//does not but realistically will need to only find orders of a day/week
+std::map<int, std::shared_ptr<Order>> OrderRepository::getCompletedOrders()  const {
     std::map<int, std::shared_ptr<Order>> completed_orders;
     for (const auto& order : orders) {
         if (order.second->compl_status == CompletionStatus::Completed) {
@@ -23,7 +25,7 @@ std::map<int, std::shared_ptr<Order>> OrderManager::getCompletedOrders()  const 
     return completed_orders;
 }
 
-float OrderManager::calculateProfits(const std::map<int, std::shared_ptr<Order>>& completed_orders) const {
+float OrderRepository::calculateProfits(const std::map<int, std::shared_ptr<Order>>& completed_orders) const {
     float profits = 0.0f;
         for (const auto& order : completed_orders) {
             profits += order.second->price;
@@ -31,7 +33,9 @@ float OrderManager::calculateProfits(const std::map<int, std::shared_ptr<Order>>
     return profits;
 }
 
-int OrderManager::addOrder(std::shared_ptr<Order> order)  {
+//checks that input order still has a default orderid, if so orderid is set to next_id (which is then incremented) and order is added to repository
+//if the above is not true, throws an error
+int OrderRepository::addOrder(std::shared_ptr<Order> order)  {
     if (order->orderid == 0) {
     int orderid = next_id++;
     order->orderid = orderid;
@@ -42,7 +46,7 @@ int OrderManager::addOrder(std::shared_ptr<Order> order)  {
     }
 }
 
-void OrderManager::editOrder(int orderid, std::shared_ptr<Order> updated_order)  {
+void OrderRepository::editOrder(int orderid, std::shared_ptr<Order> updated_order)  {
     if (!findOrder(orderid)) {
         throw std::invalid_argument("Order not found!");
     } else {
@@ -50,7 +54,7 @@ void OrderManager::editOrder(int orderid, std::shared_ptr<Order> updated_order) 
     }
 }
 
-void OrderManager::deleteOrder(int orderid)  {
+void OrderRepository::deleteOrder(int orderid)  {
     if (!findOrder(orderid)) {
         throw std::invalid_argument("Order does not exist to be deleted!");
     } else {

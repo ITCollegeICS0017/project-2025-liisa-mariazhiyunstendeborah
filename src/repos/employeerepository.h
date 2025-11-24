@@ -5,9 +5,11 @@
 #include "interfaces/iemployeerepository.h"
 #include "core/employee.h"
 
-class EmployeeManager {
+//in memory Employee Repository, sets employee ids, performs CRUD operations and finds employees
+class EmployeeRepository : public IEmployeeRepository {
     private:
         std::map<int, std::shared_ptr<Employee>> employees;
+        //ids are set incrementally starting from next_id
         int next_id = 1;
 
 
