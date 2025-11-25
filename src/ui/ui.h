@@ -128,7 +128,7 @@ public:
                 x = IOhandler<int>("Command ID").getInput();
                 
             } while (x > i || x < 0);
-            cout << "\n\n";
+            system("clear");
             if (sesh.at(x) == default_string)
             {
                 return returnVal;
@@ -172,7 +172,7 @@ public:
                 x = IOhandler<int>("Command ID").getInput();
 
             } while (x > i || x < 0);
-            
+            system("clear");
             cout << "selected command: " << sesh.at(x) << "\n\n";
             if (sesh.at(x) == "exit")
             {

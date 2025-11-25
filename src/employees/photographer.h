@@ -2,6 +2,7 @@
 #define PHOTOGRAPHER_H
 
 #include "core/employee.h"
+#include "utilities/exceptions.h"
 
 //employee photographer, that can progress on and complete orders, consume materials and submit photographer reports
 class Photographer: public Employee {
