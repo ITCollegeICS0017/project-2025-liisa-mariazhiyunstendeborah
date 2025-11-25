@@ -215,25 +215,12 @@ int UImanager::useridByName(string name)
 }
 // UImanager listing functions
 void UImanager::listClients(){
-    std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
-    std::cout << "Orders: \n";
-    for (auto const &[key, val] : orders)
-    {
-        std::cout << "\nID: " << key << " Client: " << val->client->client_name << endl;
-        std::cout << "Date created: " << val->date_created << "\n";
-        std::cout << "Status: " << dispCompStatus(val->compl_status) << "\n";
-
-        int tmpint = val->assigned_emp_id;
-        if (val->assigned_emp_id > 0)
-        {
-            std::cout << "Assigned Employee id: " << tmpint << "\n";
-        }
-        else
-        {
-            std::cout << "No assigned employee\n";
-        }
+         std::map<int, std::shared_ptr<Client>> clients = client_repository->getClients();
+            for (auto const &[key, val] : clients)
+                {
+                    std::cout << "Client ID: " << key <<" Client name: " << val->client_name << "\n"; 
+                }
     }
-}
 void UImanager::listOrders(){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::cout << "Orders: \n";
