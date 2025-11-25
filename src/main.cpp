@@ -163,5 +163,5 @@ int main() {
 	//}
 	//std::cout << "\n\n\n";
 	std::cout << "Example data initialized";
-	viewmanager->view_main();
+	viewmanager->viewMain();
 }

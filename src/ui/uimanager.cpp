@@ -10,7 +10,7 @@ UImanager::UImanager(OrderRepository *omanager, ClientRepository *climanager, Em
         this->client_repository = climanager;
 }
 
-std::string UImanager::curr_username(){
+std::string UImanager::currentUsername(){
         if (this->CurrentUser == nullptr)
         {
             return "not logged in";
@@ -23,7 +23,7 @@ std::string UImanager::curr_username(){
 
 std::string UImanager::viewContextBase(string viewContext = ""){
         string view = "\n\n";
-        view += "User: " + curr_username() + "\n";
+        view += "User: " + currentUsername() + "\n";
         view += viewContext + "\n";
         view += "\n";
         return view;
@@ -79,12 +79,12 @@ std::string UImanager::dispService(Service serv){
         }
     }
 
-std::string UImanager::chrono_to_string(std::chrono::year_month_day ymd){
+std::string UImanager::chronoToString(std::chrono::year_month_day ymd){
         std::string s = std::format("{:%Y-%m-%d}", std::chrono::sys_days{ymd});
         return s;
     }
 
-std::string UImanager::get_order(int orderid){
+std::string UImanager::getOrder(int orderid){
         Order *order = this->order_repository->findOrder(orderid);
         string orderstr = "";
         if (order == nullptr)
@@ -94,7 +94,7 @@ std::string UImanager::get_order(int orderid){
             return orderstr;
         }
         string name = order->client->client_name;
-        string date = chrono_to_string(order->date_created);
+        string date = chronoToString(order->date_created);
         string comp = dispCompStatus(order->compl_status);
         string service = dispService(order->service);
         string indays = to_string(order->in_x_days);
@@ -118,12 +118,12 @@ std::string UImanager::get_order(int orderid){
         return orderstr;
     }
 
-std::string UImanager::get_report_photographer(int report_id){
+std::string UImanager::getReportPhotographer(int report_id){
         string repstr = "";
         auto report = this->photoreport_repository->findReport(report_id);
         string repid = to_string(report->reportid);
         string cid = to_string(report->creator_id);
-        string created = chrono_to_string(report->date_created);
+        string created = chronoToString(report->date_created);
         repstr += "ID: " + repid + " Employee ID: " + cid + "\n";
         repstr += "Creation date: " + created + "\n";
         repstr += "Materials Consumed: \n";
@@ -136,24 +136,24 @@ std::string UImanager::get_report_photographer(int report_id){
         return repstr;
     }
 
-std::string UImanager::get_report_receptionist(int report_id){
+std::string UImanager::getReportReceptionist(int report_id){
         string repstr = "";
         auto report = this->receptreport_repository->findReport(report_id);
         string repid = to_string(report->reportid);
         string cid = to_string(report->creator_id);
-        string created = chrono_to_string(report->date_created);
+        string created = chronoToString(report->date_created);
         repstr += "ID: " + repid + " Employee ID: " + cid + "\n";
         repstr += "Creation date: " + created + "\n";
         repstr += "Completed Orders: \n";
 
         for (const auto& [key, val] : report->compl_orders) {
-            repstr += get_order(key);
+            repstr += getOrder(key);
 
         }
         return repstr;
 }
 
-bool UImanager::id_valid_order(int id){
+bool UImanager::idValidOrder(int id){
         Order *order = this->order_repository->findOrder(id);
         if (order != nullptr)
         {
@@ -162,7 +162,7 @@ bool UImanager::id_valid_order(int id){
         return false;
 }
 
-bool UImanager::id_valid_user(int id){
+bool UImanager::idValidUser(int id){
         Employee *emp = this->employee_repository->findEmployee(id);
         if (emp != nullptr)
         {
@@ -198,7 +198,7 @@ int UImanager::useridByName(string name)
         return -1;
 }
 
-void UImanager::list_clients(){
+void UImanager::listClients(){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::cout << "Orders: \n";
     for (auto const &[key, val] : orders)
@@ -218,7 +218,7 @@ void UImanager::list_clients(){
         }
     }
 }
-void UImanager::list_orders(){
+void UImanager::listOrders(){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::cout << "Orders: \n";
     for (auto const &[key, val] : orders)
@@ -238,29 +238,29 @@ void UImanager::list_orders(){
         }
     }
 }
-void UImanager::list_orders_client_id(int id){
+void UImanager::listOrdersClientId(int id){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::cout << "Orders: \n";
     for (auto const &[key, val] : orders)
     {
         if (val->client->client_id == id)
         {
-            std::cout << get_order(key);
+            std::cout << getOrder(key);
         }
     }
 }
-void UImanager::list_orders_emp_id(int id){
+void UImanager::listOrdersEmpId(int id){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::cout << "Orders: \n";
     for (auto const &[key, val] : orders)
     {
         if (val->assigned_emp_id == id)
         {
-            std::cout << get_order(key);
+            std::cout << getOrder(key);
         }
     }
 }
-void UImanager::list_users(){
+void UImanager::listUsers(){
     map<int, std::shared_ptr<Employee>> employees = this->employee_repository->getEmployees();
     std::cout << "Employees: \n";
     for (auto const &[key, val] : employees)
@@ -271,7 +271,7 @@ void UImanager::list_users(){
     return;
 }
 
-std::map<int, std::shared_ptr<Order>> UImanager::get_orders_emp_id(int id){
+std::map<int, std::shared_ptr<Order>> UImanager::getOrdersEmpId(int id){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::map<int, std::shared_ptr<Order>> emporders;
     std::cout << "Orders: \n";
@@ -280,7 +280,7 @@ std::map<int, std::shared_ptr<Order>> UImanager::get_orders_emp_id(int id){
         if (val->assigned_emp_id == id)
         {
             emporders[key] = val;
-            //std::cout << get_order(key);
+            //std::cout << getOrder(key);
         }
     }
     return emporders;
@@ -290,31 +290,31 @@ ViewManager::ViewManager(UImanager* ui_manager){
     this->ui_manager = ui_manager;
 }
 
-void ViewManager::view_main(){
+void ViewManager::viewMain(){
     cmdParser<int> parser;
     parser.setContext(this->ui_manager->viewContextBase("Photo Studio Main"));
-    // parser.setContext("Photography Studio main view\n"+ curr_username());
-    //  function lusers = [this](){view_list_users();};
+    // parser.setContext("Photography Studio main view\n"+ currentUsername());
+    //  function lusers = [this](){view_listUsers();};
     parser.addCommand("List Users", [this]()
                         {
-        this->ui_manager->list_users();
+        this->ui_manager->listUsers();
         return 1; });
     parser.addCommand("Login", [this, &parser]()
                         {
-                        view_login();
+                        viewLogin();
                         parser.setContext(this->ui_manager->viewContextBase("Photo Studio Main"));
                 
         return 1; });
     parser.addCommand("Employee commands", [this]()
                         {
-        view_emp_commands();
+        viewEmployeeCommands();
         return 1; });
     //  parser.listCommands();
     parser.loopCommands();
     return;
 }
 
-void ViewManager::view_login(){
+void ViewManager::viewLogin(){
     map<int, std::shared_ptr<Employee>> employees = this->ui_manager->employee_repository->getEmployees();
 
     cmdParser<int> userParser;
@@ -334,22 +334,22 @@ void ViewManager::view_login(){
     userParser.loopCommands(false);
 }
 
-void ViewManager::view_photographer(){
+void ViewManager::viewPhotographer(){
     std::cout << "Role: Photographer\n\n";
     cmdParser<int> parser;
     parser.setContext(this->ui_manager->viewContextBase("Photographer actions:"));
 
     parser.addCommand("View my assigned orders", [this]()
-                        {this->ui_manager->list_orders_emp_id(this->ui_manager->emp_id); return 1; });
+                        {this->ui_manager->listOrdersEmpId(this->ui_manager->emp_id); return 1; });
 
     parser.addCommand("Edit my assigned order", [this]()
                         {
                         cmdParser<int> ordParser;
                         ordParser.setContext("Select Order");
-                        for(auto const&[key,val] : this->ui_manager->get_orders_emp_id(this->ui_manager->emp_id)){
+                        for(auto const&[key,val] : this->ui_manager->getOrdersEmpId(this->ui_manager->emp_id)){
                                 string name = val->client->client_name;
                             string k = to_string(key);
-                            string date = this->ui_manager->chrono_to_string(val->date_created);
+                            string date = this->ui_manager->chronoToString(val->date_created);
                             string comp = this->ui_manager->dispCompStatus(val->compl_status);
                             string service = this->ui_manager->dispService(val->service);
                             string indays = to_string(val->in_x_days);
@@ -360,12 +360,12 @@ void ViewManager::view_photographer(){
                         }
                         int ordid = ordParser.valueFromCommand(-1, "None");
                         if (ordid == -1){return 1;}
-                        view_photographer_edit_order(ordid);
+                        viewPhotographerEditOrder(ordid);
                         ; return 1; });
     parser.addCommand("Submit report",[this](){
         int reportid = dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->submitReport();
             std::cout << "\nSubmitted Report, id:" << reportid << " \n";
-            std::cout << this->ui_manager->get_report_photographer(reportid);
+            std::cout << this->ui_manager->getReportPhotographer(reportid);
 
     return 1;});
 
@@ -405,13 +405,13 @@ void ViewManager::view_photographer(){
         return 1;});
     parser.loopCommands();
 }
-void ViewManager::view_photographer_edit_order(int id){
+void ViewManager::viewPhotographerEditOrder(int id){
     cmdParser<int> parser;
     Order *order = this->ui_manager->order_repository->findOrder(id);
     function<void()> updateheader = [this, id, &parser]()
     {
         string header = "editing order [" + to_string(id) + "]";
-        header += this->ui_manager->get_order(id);
+        header += this->ui_manager->getOrder(id);
         parser.setContext(this->ui_manager->viewContextBase(header));
         return;
     };
@@ -429,12 +429,12 @@ void ViewManager::view_photographer_edit_order(int id){
     
     parser.loopCommands();
 }
-void ViewManager::view_receptionist(){
+void ViewManager::viewReceptionist(){
     std::cout << "Role: Receptionist\n\n";
     cmdParser<int> parser;
     parser.setContext(this->ui_manager->viewContextBase("Receptionist actions:"));
     parser.addCommand("list orders", [this]()
-                        {this->ui_manager->list_orders();return 1; });
+                        {this->ui_manager->listOrders();return 1; });
     // parser.addCommand("assign order to employee", [this](){return 1;});
     parser.addCommand("View Order", [this]()
                         {
@@ -446,9 +446,9 @@ void ViewManager::view_receptionist(){
         {
             string ord_id = to_string(val->orderid);
             string ord_name = val->client->client_name;
-            string ord_date = this->ui_manager->chrono_to_string(val->date_created);
+            string ord_date = this->ui_manager->chronoToString(val->date_created);
             ordParser.addCommand("ID: "+ord_id+" Client: "+ord_name+"\n   Date: "+ord_date+"\n   "+ this->ui_manager->dispCompStatus(val->compl_status),[this,key](){
-                std::cout << this->ui_manager->get_order(key);
+                std::cout << this->ui_manager->getOrder(key);
                 return 1;
             });
         }
@@ -464,22 +464,22 @@ void ViewManager::view_receptionist(){
         {
             string ord_id = to_string(val->orderid);
             string ord_name = val->client->client_name;
-            string ord_date = this->ui_manager->chrono_to_string(val->date_created);
+            string ord_date = this->ui_manager->chronoToString(val->date_created);
             ordParser.addCommand("ID: "+ord_id+" Client: "+ord_name+"\n   Date: "+ord_date+"\n   "+ this->ui_manager->dispCompStatus(val->compl_status),[this,key](){
-                //std::cout << get_order(key);
-                view_receptionsit_edit_order(key);
+                //std::cout << getOrder(key);
+                viewReceptionistEditOrder(key);
                 return 1;
             });
         }
         ordParser.loopCommands(false);
             return 1; });
-    parser.addCommand("List Clients",[this](){this->ui_manager->list_clients();return 1;});
+    parser.addCommand("List Clients",[this](){this->ui_manager->listClients();return 1;});
     parser.addCommand("List Client Orders",[this](){
             int id = this->ui_manager->selectCustomerId();
         if(id == -1){
             return 1;
         }
-        this->ui_manager->list_orders_client_id(id);
+        this->ui_manager->listOrdersClientId(id);
         return 1;});
     parser.addCommand("Add Order", [this](){
         int cli_id = this->ui_manager->selectCustomerId(); 
@@ -511,7 +511,7 @@ void ViewManager::view_receptionist(){
 
         } while(!days_correct);
         int id = dynamic_cast<Receptionist*>(this->ui_manager->CurrentUser)->makeOrder(client,srv,days);
-        std::cout << this->ui_manager->get_order(id);
+        std::cout << this->ui_manager->getOrder(id);
 
         return 1;});
     parser.addCommand("Add Client",[this](){
@@ -523,20 +523,20 @@ void ViewManager::view_receptionist(){
     parser.addCommand("Submit Report",[this](){
         int repid = dynamic_cast<Receptionist*>(this->ui_manager->CurrentUser)->submitReport();
 
-        std::cout << "Submitted Report: \n" << this->ui_manager->get_report_receptionist(repid);
+        std::cout << "Submitted Report: \n" << this->ui_manager->getReportReceptionist(repid);
         
         return 1;
     });
 
     parser.loopCommands();
 }
-void ViewManager::view_receptionsit_edit_order(int id){
+void ViewManager::viewReceptionistEditOrder(int id){
     cmdParser<int> parser;
     Order *order = this->ui_manager->order_repository->findOrder(id);
     function<void()> updateheader = [this, id, &parser]()
     {
         string header = "editing order [" + to_string(id) + "]";
-        header += this->ui_manager->get_order(id);
+        header += this->ui_manager->getOrder(id);
         parser.setContext(this->ui_manager->viewContextBase(header));
         return;
     };
@@ -578,7 +578,7 @@ void ViewManager::view_receptionsit_edit_order(int id){
         return 1;});
     parser.loopCommands();
 }
-void ViewManager::view_administrator(){
+void ViewManager::viewAdministrator(){
     std::cout << "Role: Administrator\n\n";
     cmdParser<int> parser;
     parser.setContext(this->ui_manager->viewContextBase("Administrator actions:"));
@@ -591,14 +591,14 @@ void ViewManager::view_administrator(){
         for (const auto& [reportid, reportPtr] : dynamic_cast<Administrator*>(this->ui_manager->CurrentUser)->listReceptReports()) {
                 string rid = to_string(reportid);
                 string rctr = to_string(reportPtr->creator_id);
-                string rdate = this->ui_manager->chrono_to_string(reportPtr->date_created);
+                string rdate = this->ui_manager->chronoToString(reportPtr->date_created);
         /*
         std::cout << "Report ID: " << reportid << "\n";
         std::cout << "ID of report creator: " << reportPtr->creator_id << "\n";
         std::cout << "Date created: " << reportPtr->date_created << "\n";
         */
                 reportParser.addCommand("ID: "+rid+" Employee: "+rctr+"\nDate created: "+rdate, [this,reportid](){
-                    std::cout << this->ui_manager->get_report_receptionist(reportid);
+                    std::cout << this->ui_manager->getReportReceptionist(reportid);
                 return 1;
                 });
 
@@ -609,7 +609,7 @@ void ViewManager::view_administrator(){
     parser.addCommand("List Photographer Reports",[this](){
         std::cout << "Photographer reports that exist: " << "\n";
         for (const auto& [reportid, reportPtr] : dynamic_cast<Administrator*>(this->ui_manager->CurrentUser)->listPhotoReports()) {
-            std::cout << this->ui_manager->get_report_photographer(reportid) <<"\n";
+            std::cout << this->ui_manager->getReportPhotographer(reportid) <<"\n";
         }
         return 1;});
     parser.addCommand("List Materials",[this](){
@@ -661,28 +661,28 @@ void ViewManager::view_administrator(){
         return 1;});
     parser.loopCommands();
 }
-void ViewManager::view_emp_commands(){
+void ViewManager::viewEmployeeCommands(){
     if (this->ui_manager->CurrentUser == nullptr)
     {
         std::cout << "Not logged in";
         return;
     }
 
-    std::cout << "\n\nWelcome " << this->ui_manager->curr_username() << "\nEmployee id: " << this->ui_manager->emp_id << "\n\n";
+    std::cout << "\n\nWelcome " << this->ui_manager->currentUsername() << "\nEmployee id: " << this->ui_manager->emp_id << "\n\n";
 
     string usertype = this->ui_manager->CurrentUser->getEmpType();
 
     if (usertype == "Photographer")
     {
-        view_photographer();
+        viewPhotographer();
     }
     else if (usertype == "Receptionist")
     {
-        view_receptionist();
+        viewReceptionist();
     }
     else if (usertype == "Administrator")
     {
-        view_administrator();
+        viewAdministrator();
     }
     else
     {
