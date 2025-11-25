@@ -1,9 +1,9 @@
 #ifndef ORDERREPOSITORY_H
 #define ORDERREPOSITORY_H
 
-#include <stdexcept>
 #include "interfaces/iorderrepository.h"
 #include "core/order.h"
+#include "utilities/exceptions.h"
 
 //Order repository, sets order ids, performs CRUD operations, finds orders by order ids, gets completed orders & calculates profits of given orders
 class OrderRepository : public IOrderRepository{
