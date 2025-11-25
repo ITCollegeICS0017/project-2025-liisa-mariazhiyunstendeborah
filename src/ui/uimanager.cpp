@@ -1,5 +1,6 @@
 #include "uimanager.h"
 
+//UImanager constructor and UI helper functions
 UImanager::UImanager(OrderRepository *omanager, ClientRepository *climanager, EmployeeRepository *empmanager, PhotoReportRepository *prepmanager, ReceptReportRepository *repmanager, MaterialRepository *matmanager)
     {
         this->order_repository = omanager;
@@ -153,6 +154,21 @@ std::string UImanager::getReportReceptionist(int report_id){
         return repstr;
 }
 
+std::map<int, std::shared_ptr<Order>> UImanager::getOrdersEmpId(int id){
+    std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
+    std::map<int, std::shared_ptr<Order>> emporders;
+    std::cout << "Orders: \n";
+    for (auto const &[key, val] : orders)
+    {
+        if (val->assigned_emp_id == id)
+        {
+            emporders[key] = val;
+            //std::cout << getOrder(key);
+        }
+    }
+    return emporders;
+}
+// UImanager validation functions
 bool UImanager::idValidOrder(int id){
         Order *order = this->order_repository->findOrder(id);
         if (order != nullptr)
@@ -170,7 +186,7 @@ bool UImanager::idValidUser(int id){
         }
         return false;
 }
-    
+// UImanager UI actions
 int UImanager::selectCustomerId(){
          IOhandler<int> inthandler("User id");
             cmdParser<int> clientParser;
@@ -197,7 +213,7 @@ int UImanager::useridByName(string name)
         }
         return -1;
 }
-
+// UImanager listing functions
 void UImanager::listClients(){
     std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
     std::cout << "Orders: \n";
@@ -271,21 +287,8 @@ void UImanager::listUsers(){
     return;
 }
 
-std::map<int, std::shared_ptr<Order>> UImanager::getOrdersEmpId(int id){
-    std::map<int, std::shared_ptr<Order>> orders = this->order_repository->getOrders();
-    std::map<int, std::shared_ptr<Order>> emporders;
-    std::cout << "Orders: \n";
-    for (auto const &[key, val] : orders)
-    {
-        if (val->assigned_emp_id == id)
-        {
-            emporders[key] = val;
-            //std::cout << getOrder(key);
-        }
-    }
-    return emporders;
-}
 
+// ViewManager functions
 ViewManager::ViewManager(UImanager* ui_manager){
     this->ui_manager = ui_manager;
 }

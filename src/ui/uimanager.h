@@ -34,7 +34,7 @@ private:
     ClientRepository *client_repository;
     Employee* CurrentUser;
     int emp_id;
-
+//UI helper functions
     std::string currentUsername();
     std::string viewContextBase(string viewContext);
     std::string dispCompStatus(CompletionStatus stat);
@@ -43,21 +43,21 @@ private:
     std::string getOrder(int orderid);
     std::string getReportPhotographer(int report_id);
     std::string getReportReceptionist(int report_id);
-    
+    std::map<int, std::shared_ptr<Order>> getOrdersEmpId(int id);
+  //validation functions  
     bool idValidOrder(int id);
     bool idValidUser(int id);
-    
+// UI actions
     int selectCustomerId();
     int useridByName(string name);
-
+// listing functions
     void listClients();
     void listOrders();
     void listOrdersClientId(int id);
     void listOrdersEmpId(int id);
     void listUsers();
     
-    std::map<int, std::shared_ptr<Order>> getOrdersEmpId(int id);
-
+// ViewManager needs access to UImanager internals
     friend class ViewManager;
    
 };
@@ -67,7 +67,7 @@ class ViewManager  {
         UImanager* ui_manager;
     public:
     ViewManager(UImanager* ui_manager);
-    
+    //view functions
     void viewMain();
     void viewLogin();
     void viewPhotographer();
