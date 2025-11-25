@@ -26,14 +26,14 @@ int EmployeeRepository::addEmployee(std::shared_ptr<Employee> employee) {
     employees.insert({emp_id, employee});
     return emp_id;
   } else {
-    throw std::invalid_argument("Employee already exists!");
+    throw DuplicateObjectException(std::to_string(employee->emp_id));
   }
 }
 
 void EmployeeRepository::editEmployee(
     int emp_id, std::shared_ptr<Employee> updated_employee) {
   if (!findEmployee(emp_id)) {
-    throw std::invalid_argument("Employee not found!");
+    throw MissingObjectException(std::to_string(emp_id));
   } else {
     employees.at(emp_id) = updated_employee;
   }
@@ -41,7 +41,7 @@ void EmployeeRepository::editEmployee(
 
 void EmployeeRepository::deleteEmployee(int emp_id) {
   if (!findEmployee(emp_id)) {
-    throw std::invalid_argument("Employee does not exist to be deleted!");
+    throw MissingObjectException(std::to_string(emp_id));
   } else {
     employees.erase(emp_id);
   }

@@ -8,14 +8,14 @@ void MaterialRepository::addMaterial(std::shared_ptr<Material> material) {
   if (!findMaterialbyType(material->mat_type)) {
     materials.push_back(material);
   } else {
-    throw std::invalid_argument("Material already exists!");
+    throw DuplicateObjectException(material->mat_type);
   }
 }
 
 void MaterialRepository::editMaterial(
     const std::shared_ptr<Material>& updated_mat) {
   if (!findMaterialbyType(updated_mat->mat_type)) {
-    throw std::invalid_argument("Material not found!");
+    throw MissingObjectException(updated_mat->mat_type);
   } else {
     for (auto& material : materials) {
       if (material->mat_type == updated_mat->mat_type) {
@@ -28,7 +28,7 @@ void MaterialRepository::editMaterial(
 
 void MaterialRepository::deleteMaterial(std::string mat_type) {
   if (!findMaterialbyType(mat_type)) {
-    throw std::invalid_argument("Material does not exist to be deleted!");
+    throw MissingObjectException(mat_type);
   } else {
     materials.erase(
         std::remove_if(materials.begin(), materials.end(),

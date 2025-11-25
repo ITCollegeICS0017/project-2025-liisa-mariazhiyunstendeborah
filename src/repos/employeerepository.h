@@ -1,9 +1,10 @@
 #ifndef EMPLOYEEREPOSITORY_H
 #define EMPLOYEEREPOSITORY_H
 
-#include <stdexcept>
+#include <string>
 #include "interfaces/iemployeerepository.h"
 #include "core/employee.h"
+#include "utilities/exceptions.h"
 
 //in memory Employee Repository, sets employee ids, performs CRUD operations and finds employees
 class EmployeeRepository : public IEmployeeRepository {
@@ -11,7 +12,6 @@ class EmployeeRepository : public IEmployeeRepository {
         std::map<int, std::shared_ptr<Employee>> employees;
         //ids are set incrementally starting from next_id
         int next_id = 1;
-
 
     public:
         const std::map<int, std::shared_ptr<Employee>>& getEmployees() const;

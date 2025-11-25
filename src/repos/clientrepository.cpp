@@ -24,21 +24,21 @@ int ClientRepository::addClient(std::shared_ptr<Client> client) {
     clients.insert({client_id, client});
     return client_id;
   } else {
-    throw std::invalid_argument("Client already exists!");
+    throw DuplicateObjectException(std::to_string(client->client_id));
   }
 }
 
 void ClientRepository::editClient(int client_id,
                                   std::shared_ptr<Client> updated_client) {
   if (!findClient(client_id)) {
-    throw std::invalid_argument("Client not found!");
+    throw MissingObjectException(std::to_string(client_id));
   }
   clients.at(client_id) = updated_client;
 }
 
 void ClientRepository::deleteClient(int client_id) {
   if (!findClient(client_id)) {
-    throw std::invalid_argument("Client does not exist to be deleted!");
+    throw MissingObjectException(std::to_string(client_id));
   } else {
     clients.erase(client_id);
   }

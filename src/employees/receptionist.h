@@ -2,6 +2,7 @@
 #define RECEPTIONIST_H
 
 #include "core/employee.h"
+#include "utilities/exceptions.h"
 
 //employee receptionist, creates & assigns orders and submits receptionist reports
 class Receptionist: public Employee {

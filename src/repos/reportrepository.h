@@ -3,6 +3,7 @@
 
 #include "interfaces/ireportrepository.h"
 #include "core/reports.h"
+#include "utilities/exceptions.h"
 
 template <typename ReportT>
 class ReportRepository : public IReportRepository<ReportT> {
@@ -44,14 +45,14 @@ int ReportRepository<ReportT>::addReport(std::shared_ptr<ReportT> report) {
         reports.insert({reportid, report});
         return reportid;
     } else {
-        throw std::invalid_argument("Report already exists!");
+        throw DuplicateObjectException("Report with ID: " + std::to_string(report->reportid));
     }
 }
 
 template <typename ReportT>
 void ReportRepository<ReportT>::editReport (int reportid, std::shared_ptr<ReportT> updatedReport) {
     if (!findReport(reportid)) {
-        throw std::invalid_argument("Report not found!");
+        throw MissingObjectException("Report with ID: " + std::to_string(reportid));
     } else {
         reports.at(reportid) = updatedReport;
     }
@@ -60,7 +61,7 @@ void ReportRepository<ReportT>::editReport (int reportid, std::shared_ptr<Report
 template <typename ReportT>
 void ReportRepository<ReportT>::deleteReport(int reportid) {
     if (!findReport(reportid)) {
-        throw std::invalid_argument("Report does not exist to be deleted!");
+        throw MissingObjectException("Report with ID: " + std::to_string(reportid));
     } else {
         reports.erase(reportid);
     }

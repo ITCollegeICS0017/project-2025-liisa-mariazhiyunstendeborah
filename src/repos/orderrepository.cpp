@@ -47,14 +47,14 @@ int OrderRepository::addOrder(std::shared_ptr<Order> order) {
     orders.insert({orderid, order});
     return orderid;
   } else {
-    throw std::invalid_argument("Order already exists!");
+    throw DuplicateObjectException(std::to_string(order->orderid));
   }
 }
 
 void OrderRepository::editOrder(int orderid,
                                 std::shared_ptr<Order> updated_order) {
   if (!findOrder(orderid)) {
-    throw std::invalid_argument("Order not found!");
+    throw MissingObjectException(std::to_string(orderid));
   } else {
     orders.at(orderid) = updated_order;
   }
@@ -62,7 +62,7 @@ void OrderRepository::editOrder(int orderid,
 
 void OrderRepository::deleteOrder(int orderid) {
   if (!findOrder(orderid)) {
-    throw std::invalid_argument("Order does not exist to be deleted!");
+    throw MissingObjectException(std::to_string(orderid));
   } else {
     orders.erase(orderid);
   }

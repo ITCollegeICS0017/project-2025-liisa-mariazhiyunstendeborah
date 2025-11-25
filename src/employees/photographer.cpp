@@ -8,30 +8,32 @@ void Photographer::switchOrderStatus(Order* changedorder,
   if (changedorder != nullptr) {
     changedorder->compl_status = compl_status;
   } else {
-    throw std::invalid_argument("Passed in a nullptr!");
+    throw std::invalid_argument("Order input is a nullptr!");
   }
 }
+//!!!TODO!!!: not sure if a custom exception is necessary for this
 
 // Checks if entered material exists in global material repository
-// if the material does not exist, throws an error;
-// if the material's stock quantity is less than the quantity to be consumed,
-// throws an error; if material found, the consumed quantity is subtracted from
-// the stock quantity. Next, checks that the material does not exist in the
-// photographer-specific consumed_materials repository, if the material exists
-// in consumed_materials, consumed quantity increases by the input quantity; if
-// the material does not exist in consumed_materials, it is created with the
-// input quantity.
+// - if it does not, catches repository error and propogates to UI layer;
+// - if the material's stock quantity is less than the quantity to be consumed, throws error; 
+// - if material found, the consumed quantity is subtracted from the stock quantity. 
+// Next checks that the material does not exist in the photographer-specific consumed_materials repository, 
+// - if the material exists in consumed_materials, consumed quantity increases by the input quantity; 
+// - if the material does not exist in consumed_materials, it is created with the input quantity.
 void Photographer::consumeMaterial(std::string mat_type,
                                    unsigned int quantity) {
-  auto material = material_repository->findMaterialbyType(mat_type);
-  if (!material) {
-    throw std::invalid_argument("Material not found!");
-  } else if (material->stock_qty < quantity) {
-    throw std::invalid_argument("Not enough of this material in stock!");
+  Material *material;
+  try {
+    material = material_repository->findMaterialbyType(mat_type);
+  } catch(const MissingObjectException& e) {
+      throw MaterialNotFound(mat_type);
+  } 
+  if (material->stock_qty < quantity) {
+    throw InvalidConsumption(material->stock_qty);
   }
   material->stock_qty -= quantity;
-  material = consumed_materials->findMaterialbyType(mat_type);
-  if (!material) {
+  auto consumed_material = consumed_materials->findMaterialbyType(mat_type);
+  if (!consumed_material) {
     consumed_materials->addMaterial(
         std::make_shared<Material>(mat_type, quantity));
   } else {
@@ -54,7 +56,7 @@ std::map<std::shared_ptr<Material>, int> Photographer::getConsumedMaterials() {
 int Photographer::submitReport() {
   auto report =
       std::make_shared<PhotoReport>(emp_id, clock, getConsumedMaterials());
-  return photoreport_repository->addReport(report);
+  photoreport_repository->addReport(report);
 }
 
 // custom destructor to make sure consumed_materials is destroyed

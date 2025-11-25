@@ -31,5 +31,9 @@ void Administrator::addMaterial(std::string mat_type, unsigned int quantity) {
 
 // deletes a material entirely.
 void Administrator::deleteMaterial(std::string mat_type) {
+  try {
   material_repository->deleteMaterial(mat_type);
+  } catch (const MissingObjectException& e) {
+    throw MaterialNotFound(mat_type);
+  }
 }
