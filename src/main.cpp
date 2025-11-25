@@ -24,7 +24,7 @@ int main() {
 	MaterialRepository* material_repository = new MaterialRepository();
 	ClientRepository* client_repository = new ClientRepository();
 	UImanager* uimanager = new UImanager(order_repository, client_repository, employee_repository, photoreport_repository, receptreport_repository, material_repository);
-
+	ViewManager* viewmanager = new ViewManager(uimanager);
 	auto material = std::make_shared<Material>("paper");
 	auto material1 = std::make_shared<Material>("film");
 	auto material2 = std::make_shared<Material>("food");
@@ -163,5 +163,5 @@ int main() {
 	//}
 	//std::cout << "\n\n\n";
 	std::cout << "Example data initialized";
-	uimanager->view_main();
+	viewmanager->view_main();
 }
