@@ -56,7 +56,7 @@ std::map<std::shared_ptr<Material>, int> Photographer::getConsumedMaterials() {
 int Photographer::submitReport() {
   auto report =
       std::make_shared<PhotoReport>(emp_id, clock, getConsumedMaterials());
-  photoreport_repository->addReport(report);
+  return photoreport_repository->addReport(report);
 }
 
 // custom destructor to make sure consumed_materials is destroyed
