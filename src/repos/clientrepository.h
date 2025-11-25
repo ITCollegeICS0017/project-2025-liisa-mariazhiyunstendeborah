@@ -1,9 +1,9 @@
 #ifndef CLIENTREPOSITORY_H
 #define CLIENTREPOSITORY_H
 
-#include <stdexcept>
 #include "interfaces/iclientrepository.h"
 #include "core/client.h"
+#include "utilities/exceptions.h"
 
 //in memory client repository, sets client ids, uses crud operations and finds clients by id.
 class ClientRepository : public IClientRepository{
