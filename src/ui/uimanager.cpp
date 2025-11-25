@@ -366,9 +366,24 @@ void ViewManager::viewPhotographer(){
                         viewPhotographerEditOrder(ordid);
                         ; return 1; });
     parser.addCommand("Submit report",[this](){
-        int reportid = dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->submitReport();
+        
+        try
+        {
+            int reportid = dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->submitReport();
             std::cout << "\nSubmitted Report, id:" << reportid << " \n";
             std::cout << this->ui_manager->getReportPhotographer(reportid);
+        }
+        catch(const DuplicateObjectException& e)
+        {
+            std::cerr << "report already exists" << e.what() << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "Error in submitting report: " << e.what() << '\n';
+        }
+        
+        
+
 
     return 1;});
 
@@ -398,7 +413,19 @@ void ViewManager::viewPhotographer(){
                 }
                 std::cout << "\nQuantity after removing " << (int(material->stock_qty) - remove) << "\n";
                 unsigned int uremove = unsigned(remove);
-                dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->consumeMaterial(material->mat_type,uremove);
+                try
+                {
+                    dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->consumeMaterial(material->mat_type,uremove);
+                    /* code */
+                }
+                catch(const MaterialNotFound& e)
+                {
+                    std::cerr << "Material not found" << e.what() << '\n';
+                } catch(const InvalidConsumption& e)
+                {
+                    std::cerr << "Invalid consumption amount: " << e.what() << '\n';
+                }
+                
 
                 return mat;
             } );
@@ -425,8 +452,16 @@ void ViewManager::viewPhotographerEditOrder(int id){
         statParser.addCommand("In Progress",[&order,this](){dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->switchOrderStatus(order,CompletionStatus::InProgress); return 1; });
         statParser.addCommand("Completed",[&order,this](){dynamic_cast<Photographer*>(this->ui_manager->CurrentUser)->switchOrderStatus(order,CompletionStatus::Completed); return 1; });
         
+        try
+        {
+            /* code */
+            statParser.loopCommands(false);
+        }
+        catch(const std::invalid_argument& e)
+        {
+            std::cerr <<"Error in setting status: "<< e.what() << '\n';
+        }
         
-        statParser.loopCommands(false);
         updateheader(); 
         return 1;});
     
@@ -513,20 +548,46 @@ void ViewManager::viewReceptionist(){
             }
 
         } while(!days_correct);
-        int id = dynamic_cast<Receptionist*>(this->ui_manager->CurrentUser)->makeOrder(client,srv,days);
-        std::cout << this->ui_manager->getOrder(id);
+        try
+        {
+            /* code */
+            int id = dynamic_cast<Receptionist*>(this->ui_manager->CurrentUser)->makeOrder(client,srv,days);
+            std::cout << this->ui_manager->getOrder(id);
+        }
+        catch(const DuplicateObjectException& e)
+        {
+            std::cerr << "Error in creating duplicate order: "<< e.what() << '\n';
+        }
+        
 
         return 1;});
     parser.addCommand("Add Client",[this](){
         IOhandler<string> strhandler("Client name: ");
         auto client = std::make_shared<Client>(strhandler.getInput());
-        this->ui_manager->client_repository->addClient(client);
+        try
+        {
+            /* code */
+            this->ui_manager->client_repository->addClient(client);
+        }
+        catch(const DuplicateObjectException& e)
+        {
+            std::cerr << "User already exists: " << e.what() << '\n';
+        }
+        
         return 1;
     });
     parser.addCommand("Submit Report",[this](){
-        int repid = dynamic_cast<Receptionist*>(this->ui_manager->CurrentUser)->submitReport();
+        try
+        {
+            int repid = dynamic_cast<Receptionist*>(this->ui_manager->CurrentUser)->submitReport();
+            /* code */
+            std::cout << "Submitted Report: \n" << this->ui_manager->getReportReceptionist(repid);
+        }
+        catch(const DuplicateObjectException& e)
+        {
+            std::cerr << "Report already exists: " << e.what() << '\n';
+        }
 
-        std::cout << "Submitted Report: \n" << this->ui_manager->getReportReceptionist(repid);
         
         return 1;
     });
@@ -632,7 +693,16 @@ void ViewManager::viewAdministrator(){
             string stock = to_string(material->stock_qty);
             matparser.addCommand( mat + " Quantity: " + stock,[mat,material,this]()
             {
-                dynamic_cast<Administrator*>(this->ui_manager->CurrentUser)->deleteMaterial(material->mat_type);
+                try
+                {
+                    /* code */
+                    dynamic_cast<Administrator*>(this->ui_manager->CurrentUser)->deleteMaterial(material->mat_type);
+                }
+                catch(const MaterialNotFound& e)
+                {
+                    std::cerr << "Material not found: " << e.what() << '\n';
+                }
+                
                 return mat;
             } );
         }
@@ -660,7 +730,16 @@ void ViewManager::viewAdministrator(){
             i = inthandler.getInput();
         }
         unsigned int j = unsigned(i);
-        dynamic_cast<Administrator*>(this->ui_manager->CurrentUser)->addMaterial(mat,j);
+        try
+        {
+            dynamic_cast<Administrator*>(this->ui_manager->CurrentUser)->addMaterial(mat,j);
+            /* code */
+        }
+        catch(const DuplicateObjectException& e)
+        {
+            std::cerr << "Error when adding duplicate material: " << e.what() << '\n';
+        }
+        
         return 1;});
     parser.loopCommands();
 }
