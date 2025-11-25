@@ -34,7 +34,7 @@ int main() {
   auto admin = std::make_shared<Administrator>(
       order_repository, "Binkle Bonkler", material_repository,
       receptreport_repository, photoreport_repository);
-  // int admin_id = employee_repository->addEmployee(admin);
+  employee_repository->addEmployee(admin);
   // std::cout << "Made administrator with employee id: " << admin_id << "\n";
 
 
@@ -68,7 +68,7 @@ int main() {
 
   auto receptionist = std::make_shared<Receptionist>(
       order_repository, "Schmongler", clock, receptreport_repository);
-  // int receptionist_id = employee_repository->addEmployee(receptionist);
+  employee_repository->addEmployee(receptionist);
   // std::cout << "Made receptionist with employee id: " << receptionist_id <<
   // "\n";
 
