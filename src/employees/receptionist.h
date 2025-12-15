@@ -11,7 +11,12 @@ class Receptionist: public Employee {
         ReceptReportRepository* receptreport_repository;
 
     public:
-        Receptionist(OrderRepository* order_repository, std::string emp_name, IClock& clock, ReceptReportRepository* receptreport_repository) : Employee(order_repository, emp_name), clock(clock), receptreport_repository(receptreport_repository) { }
+        Receptionist(OrderRepository* order_repository, std::string emp_name, IClock& clock, ReceptReportRepository* receptreport_repository) : 
+        Employee(order_repository, emp_name), clock(clock), receptreport_repository(receptreport_repository) { }
+
+        //Used only during XML reading
+        Receptionist(OrderRepository* order_repository, int emp_id, std::string emp_name, IClock& clock, ReceptReportRepository* receptreport_repository) : 
+        Employee(order_repository, emp_id, emp_name), clock(clock), receptreport_repository(receptreport_repository) { }
 
         //returns receptionist class name
         std::string getEmpType();

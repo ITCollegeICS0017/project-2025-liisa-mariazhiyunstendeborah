@@ -20,6 +20,8 @@ class ReportRepository : public IReportRepository<ReportT> {
 
         int addReport(std::shared_ptr<ReportT> report);
 
+        void ReportRepository<ReportT>::addExistingReport(std::shared_ptr<ReportT> report);
+
         void editReport (int reportid, std::shared_ptr<ReportT> updatedReport);
 
         void deleteReport(int reportid);
@@ -44,6 +46,18 @@ int ReportRepository<ReportT>::addReport(std::shared_ptr<ReportT> report) {
         report->reportid = reportid;
         reports.insert({reportid, report});
         return reportid;
+    } else {
+        throw DuplicateObjectException("Report with ID: " + std::to_string(report->reportid));
+    }
+}
+
+template <typename ReportT>
+void ReportRepository<ReportT>::addExistingReport(std::shared_ptr<ReportT> report) {
+    if (!findReport(report->reportid)) {
+        if (report->reportid > next_id) {
+            next_id = report->reportid + 1;
+        }
+        reports.insert({report->reportid, report});
     } else {
         throw DuplicateObjectException("Report with ID: " + std::to_string(report->reportid));
     }

@@ -20,6 +20,8 @@ class EmployeeRepository : public IEmployeeRepository {
 
         int addEmployee(std::shared_ptr<Employee> employee);
 
+        void addExistingEmployee(std::shared_ptr<Employee> employee);
+
         void editEmployee(int emp_id, std::shared_ptr<Employee> updated_employee);
 
         void deleteEmployee(int emp_id);

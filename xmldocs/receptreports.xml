@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<receptreports>
+	<receptreport reportid=0 date_created=>
+		<compl_orders total_revenue=0>
+	<!--> orderid below not sure if this is good but not sure how to do this<\-->
+			<order> 0 <\order>
+		<\compl_orders>
+	<\receptreport>
+<\receptreports>

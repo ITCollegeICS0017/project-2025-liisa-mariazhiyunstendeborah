@@ -17,7 +17,15 @@ class Photographer: public Employee {
         //returns photographer-specific material repository of consumed materials
         std::map<std::shared_ptr<Material>, int> getConsumedMaterials();
     public:
-        Photographer(OrderRepository* order_repository, std::string emp_name, IClock& clock, MaterialRepository* material_repository, PhotoReportRepository* photoreport_repository) : Employee(order_repository, emp_name), clock(clock), material_repository(material_repository), photoreport_repository(photoreport_repository) {
+        Photographer(OrderRepository* order_repository, std::string emp_name, IClock& clock, MaterialRepository* material_repository, 
+        PhotoReportRepository* photoreport_repository) : Employee(order_repository, emp_name), clock(clock), material_repository(material_repository), photoreport_repository(photoreport_repository) {
+            this->consumed_materials = new MaterialRepository();
+        }
+
+        //Used only during XML reading
+        Photographer(OrderRepository* order_repository, int emp_id, std::string emp_name, IClock& clock, MaterialRepository* material_repository, 
+        PhotoReportRepository* photoreport_repository, MaterialRepository* consumed_materials) : Employee(order_repository, emp_id, emp_name), 
+        clock(clock), material_repository(material_repository), photoreport_repository(photoreport_repository), consumed_materials(consumed_materials) {
             this->consumed_materials = new MaterialRepository();
         }
 

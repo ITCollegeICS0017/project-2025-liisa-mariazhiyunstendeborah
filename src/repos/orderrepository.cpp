@@ -51,6 +51,17 @@ int OrderRepository::addOrder(std::shared_ptr<Order> order) {
   }
 }
 
+void OrderRepository::addExistingOrder(std::shared_ptr<Order> order) {
+  if (!findOrder(order->orderid)) {
+    if (order->orderid > next_id) {
+      next_id = order->orderid + 1;
+    }
+    orders.insert({order->orderid, order});
+  } else {
+    throw DuplicateObjectException(std::to_string(order->orderid));
+  }
+}
+
 void OrderRepository::editOrder(int orderid,
                                 std::shared_ptr<Order> updated_order) {
   if (!findOrder(orderid)) {

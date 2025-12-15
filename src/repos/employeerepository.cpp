@@ -30,6 +30,17 @@ int EmployeeRepository::addEmployee(std::shared_ptr<Employee> employee) {
   }
 }
 
+void EmployeeRepository::addExistingEmployee(std::shared_ptr<Employee> employee) {
+  if (!findEmployee(employee->emp_id)) {
+    if (employee->emp_id > next_id) {
+      next_id = employee->emp_id + 1;
+    }
+    employees.insert({employee->emp_id, employee});
+  } else {
+    throw DuplicateObjectException(std::to_string(employee->emp_id));
+  }
+}
+
 void EmployeeRepository::editEmployee(
     int emp_id, std::shared_ptr<Employee> updated_employee) {
   if (!findEmployee(emp_id)) {

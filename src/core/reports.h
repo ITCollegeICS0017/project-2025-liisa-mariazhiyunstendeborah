@@ -20,6 +20,9 @@ class Report {
 
         Report(int creator_id, IClock& clock);
 
+        //Used only during XML reading
+		Report(int reportid, int creator_id, std::chrono::year_month_day date_created) : reportid(reportid), creator_id(creator_id), date_created(date_created) { }
+
         virtual ~Report() = default;
 };
 
@@ -33,6 +36,9 @@ class ReceptReport : public Report {
 
         ReceptReport(int creator_id, IClock& clock, std::map<int, std::shared_ptr<Order>> compl_orders, int total_revenue) : Report(creator_id, clock), compl_orders(compl_orders), total_revenue(total_revenue) { }
 
+        //Used only during XML reading
+        ReceptReport(int reportid, int creator_id, std::chrono::year_month_day date_created, int total_revenue) : Report(reportid, creator_id, date_created), total_revenue(total_revenue) { }
+
 };
 
 //photographer's reports, meant to report on consumed materials (not attached to any specific order)
@@ -43,6 +49,9 @@ class PhotoReport : public Report{
         std::map<std::shared_ptr<Material>, int> consumed_materials;
 
         PhotoReport(int creator_id, IClock& clock, std::map<std::shared_ptr<Material>, int> consumed_materials) : Report(creator_id, clock), consumed_materials(consumed_materials) { }
+
+        //Used only during XML reading
+        PhotoReport(int reportid, int creator_id, std::chrono::year_month_day date_created) : Report(reportid, creator_id, date_created) { }
 };
 
 #endif
