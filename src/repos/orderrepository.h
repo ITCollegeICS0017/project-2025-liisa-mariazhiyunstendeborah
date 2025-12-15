@@ -25,7 +25,7 @@ class OrderRepository : public IOrderRepository{
 
         int addOrder(std::shared_ptr<Order> order);
 
-        void OrderRepository::addExistingOrder(std::shared_ptr<Order> order);
+        void addExistingOrder(std::shared_ptr<Order> order);
 
         void editOrder(int orderid, std::shared_ptr<Order> updated_order);
 

@@ -14,7 +14,7 @@ public:
 	Service service;
 	//currently used as amount of workdays needed rather than the deadline it appears to be, which makes for my very silly price calculation
 	unsigned int in_x_days;
-	IClock& clock;
+	IClock *clock;
 	std::chrono::year_month_day date_created;
 	//default value of orderid, to be changed when an order is added to the repository
 	int orderid = 0;
@@ -24,10 +24,12 @@ public:
 	int assigned_emp_id = 0;
 
 	//Constructor, currently implements a pointer to a client, but could potentially be improved.
-	Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, IClock& clock);
+	Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, IClock *clock);
 
     //Used only during XML reading
-	Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, std::chrono::year_month_day date_created, int orderid, CompletionStatus compl_status, float price, int assigned_emp_id) : client(client), service(service), compl_status(compl_status), price(price), assigned_emp_id(assigned_emp_id) { }
+	Order(std::shared_ptr<Client> client, Service service, unsigned int in_x_days, std::chrono::year_month_day date_created, int orderid, 
+	CompletionStatus compl_status, float price, int assigned_emp_id) : client(client), service(service), in_x_days(in_x_days), date_created(date_created), 
+	orderid(orderid), compl_status(compl_status), price(price), assigned_emp_id(assigned_emp_id) { }
 	
 	virtual ~Order() = default;
 

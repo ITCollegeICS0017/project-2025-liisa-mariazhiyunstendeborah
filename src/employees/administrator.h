@@ -11,7 +11,14 @@ class Administrator: public Employee {
         PhotoReportRepository* photoreport_repository;
 
     public:
-        Administrator(OrderRepository* order_repository, std::string emp_name, MaterialRepository* material_repository, ReceptReportRepository* receptreport_repository, PhotoReportRepository* photoreport_repository) : Employee(order_repository, emp_name), material_repository(material_repository), receptreport_repository(receptreport_repository), photoreport_repository(photoreport_repository) { }
+        Administrator(OrderRepository* order_repository, std::string emp_name, MaterialRepository* material_repository, 
+        ReceptReportRepository* receptreport_repository, PhotoReportRepository* photoreport_repository) : Employee(order_repository, emp_name), 
+        material_repository(material_repository), receptreport_repository(receptreport_repository), photoreport_repository(photoreport_repository) { }
+
+        //Used only during XML reading 
+        Administrator(OrderRepository* order_repository, int emp_id, std::string emp_name, MaterialRepository* material_repository, 
+        ReceptReportRepository* receptreport_repository, PhotoReportRepository* photoreport_repository) : Employee(order_repository, emp_id, emp_name), 
+        material_repository(material_repository), receptreport_repository(receptreport_repository), photoreport_repository(photoreport_repository) { }
 
         //returns string of administrator's class name
         std::string getEmpType();

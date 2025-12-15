@@ -20,7 +20,7 @@ class ReportRepository : public IReportRepository<ReportT> {
 
         int addReport(std::shared_ptr<ReportT> report);
 
-        void ReportRepository<ReportT>::addExistingReport(std::shared_ptr<ReportT> report);
+        void addExistingReport(std::shared_ptr<ReportT> report);
 
         void editReport (int reportid, std::shared_ptr<ReportT> updatedReport);
 
