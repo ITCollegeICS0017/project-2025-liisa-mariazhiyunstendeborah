@@ -339,11 +339,89 @@ void populatePhotoReportRepository(PhotoReportRepository &photoreport_repo) {
 }
 
 //saving funcs
-void saveClientRepository(ClientRepository &client_repo) { }
+void saveClientRepository(ClientRepository &client_repo) {
+	XMLDocument doc;
+	XMLError err = doc.LoadFile(clientf);
+	if (err != XML_SUCCESS) {
+		return;
+	}
 
-void saveMaterialRepository(MaterialRepository &mat_repo) { }
+	XMLElement *pClients = doc.RootElement();	
 
-void savePhotographerRepository(EmployeeRepository &empl_repo) { }
+	for (auto const& [client_id, client] : client_repo.clients) {
+		XMLNode *pClient = doc.NewElement("client");
+
+		pClient->SetAttribute("client_id", client_id);
+
+		pClients->InsertEndChild(pClient);
+
+		XMLElement *pElement = doc.NewElement("client_name");
+
+		pElement-> SetText(client->client_name);
+
+		pClient->InsertEndChild(pElement);
+	}
+}
+
+void saveMaterialRepository(MaterialRepository &mat_repo) {
+	XMLDocument doc;
+	XMLError err = doc.LoadFile(clientf);
+	if (err != XML_SUCCESS) {
+		return;
+	}
+	
+	XMLElement *pMats = doc.RootElement();
+
+	for (auto const& mat : mat_repo.materials) {
+		XMLNode *pMat = doc.NewElement("material");
+
+		pMat->SetAttribute ("mat_type", mat_repo.materials[i]->mat_type);
+
+		pMats->InsertEndChild(pMat);
+
+		XMLElement *pElement = doc.NewElement("stock_qty");
+		pElement-> SetText(mat_repo.materials[i]->stock_qty);
+
+		pMat-> InsertEndChild(pElement);
+	}
+}
+
+void savePhotographerRepository(EmployeeRepository &empl_repo) {
+	XMLDocument doc;
+	XMLError err = doc.LoadFile(clientf);
+	if (err != XML_SUCCESS) {
+		return;
+	}
+	
+	XMLElement *pPhotographer = doc.RootElement();
+
+	std::map<int, std::shared_ptr<Employee>> photographers = empl_repo.getEmpofType("Photographer");
+
+	for (auto const& [phtgr_id, phtgr] : photographers) {
+		XMLNode *pPhtgr = doc.NewElement("photographer");
+
+		pPhtgr->SetAttribute ("emp_id", phtgr_id);
+
+		pPhtgr->InsertEndChild(pPhtgr);
+
+		XMLElement *pElement = doc.NewElement("emp_name");
+		pElement->SetText(phtgr->emp_name);
+
+		pPhgr->InsertEndChild(pElement);
+
+		XMLElement *pElement = doc.NewElement("consumed_materials");
+
+		pPhgr->InsertEndChild(pElement);
+
+		for (auto const& material : phtgr->consumed_materials) {
+			XMLElement *pElement = doc.NewElement("material");
+
+			pElement->SetAttribute ("mat_type", material->mat_type);
+
+			pElement->SetText(material->stock_qty);	
+		}	
+	}
+}
 
 void saveReceptionistRepository(EmployeeRepository &empl_repo) { }
 

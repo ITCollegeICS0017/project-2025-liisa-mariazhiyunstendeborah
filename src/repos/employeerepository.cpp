@@ -5,6 +5,17 @@ EmployeeRepository::getEmployees() const {
   return employees;
 }
 
+std::map<int, std::shared_ptr<Employee>>
+EmployeeRepository::getEmpofType(std::string emp_type) const {
+  std::map<int, std::shared_ptr<Employee>> employees_of_type;
+  for (auto const& [emp_id, employee] : employees) {
+    if (employee->getEmpType() == emp_type) {
+      employees_of_type.insert({emp_id, employee});
+    }
+  }
+  return employees_of_type;
+}
+
 // Upon not finding an employee, returns a nullptr rather than return an error,
 // so it's easier to use in other functions for checking if an employee exists.
 Employee* EmployeeRepository::findEmployee(int emp_id) {
