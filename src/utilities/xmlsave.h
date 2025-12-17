@@ -1,7 +1,7 @@
 #ifndef XMLSAVE_H
 #define XMLSAVE_H
 
-#include "tinyxml2/tinyxml2.h"
+#include "tinyxml2.h"
 #include "repos/clientrepository.h"
 #include "repos/employeerepository.h"
 #include "repos/orderrepository.h"

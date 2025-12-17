@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-g -Wall -Wextra -std=c++20 -Wno-unused-parameter -Isrc -I./tinyxml2
+CXXFLAGS=-g -Wall -Wextra -std=c++20 -Wno-unused-parameter -Isrc -Itinyxml2
 
 #Find all .cpp files in src and its subdirectories
 SRC=$(wildcard src/*.cpp src/core/*.cpp src/repos/*.cpp src/utilities/*.cpp src/ui/*.cpp src/employees/*.cpp)
