@@ -1,0 +1,11 @@
+<materials>
+    <material mat_type="paper">
+        <stock_qty>20</stock_qty>
+    </material>
+    <material mat_type="film">
+        <stock_qty>10</stock_qty>
+    </material>
+    <material mat_type="food">
+        <stock_qty>10</stock_qty>
+    </material>
+</materials>
