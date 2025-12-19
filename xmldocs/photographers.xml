@@ -1,1 +1,6 @@
-<photographers/>
+<photographers>
+    <photographer emp_id="3">
+        <emp_name>Kababoomgler</emp_name>
+        <consumed_materials/>
+    </photographer>
+</photographers>

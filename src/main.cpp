@@ -54,22 +54,45 @@ int main() {
 	//admin->addMaterial(material->mat_type, 10);
 	//admin->addMaterial(material1->mat_type, 10);
 	//admin->addMaterial(material2->mat_type, 10);
+
+	//auto client = std::make_shared<Client>("Bones Jones");
+	//client_repository->addClient(client);
+
+	//Service service = Photo_printing;
+	//Service service2 = Film_devel;
+	//int in_x_days = 3;
+
+	//auto receptionist = std::make_shared<Receptionist>(
+	//	order_repository, "Schmongler", &clock, receptreport_repository);
+	//employee_repository->addEmployee(receptionist);
+
+	//receptionist->makeOrder(client, service, in_x_days);
+	//receptionist->makeOrder(client, service2, 1);
+
+	//auto photographer = std::make_shared<Photographer>(
+	//	order_repository, "Kababoomgler", &clock, material_repository,
+	//	photoreport_repository);
+	//employee_repository->addEmployee(photographer);
+
+	//receptionist->submitReport();
+
+
 	
-	//XMLpopulate::populateClientRepository(*client_repository, clientf);
+	XMLpopulate::populateClientRepository(*client_repository, clientf);
 
-	//XMLpopulate::populateMaterialRepository(*material_repository, matf);
+	XMLpopulate::populateMaterialRepository(*material_repository, matf);
 
-	//XMLpopulate::populateAdministratorRepository(*employee_repository, *order_repository, *material_repository, *receptreport_repository, *photoreport_repository, adminf);
+	XMLpopulate::populateAdministratorRepository(*employee_repository, *order_repository, *material_repository, *receptreport_repository, *photoreport_repository, adminf);
 
-	//XMLpopulate::populatePhotographerRepository(*employee_repository, *order_repository, *material_repository, *photoreport_repository, clock, photogrf);
+	XMLpopulate::populatePhotographerRepository(*employee_repository, *order_repository, *material_repository, *photoreport_repository, clock, photogrf);
 
-	//XMLpopulate::populateReceptionistRepository(*employee_repository, *order_repository, *material_repository, *receptreport_repository, clock, receptistf);
+	XMLpopulate::populateReceptionistRepository(*employee_repository, *order_repository, *material_repository, *receptreport_repository, clock, receptistf);
 
-	//XMLpopulate::populateOrderRepository(*order_repository, *client_repository, orderf);
+	XMLpopulate::populateOrderRepository(*order_repository, *client_repository, orderf);
 
-	//XMLpopulate::populateReceptReportRepository(*receptreport_repository, *order_repository, recrepf);
+	XMLpopulate::populateReceptReportRepository(*receptreport_repository, *order_repository, recrepf);
 
-	//XMLpopulate::populatePhotoReportRepository(*photoreport_repository, *order_repository, phorepf);
+	XMLpopulate::populatePhotoReportRepository(*photoreport_repository, *order_repository, phorepf);
 
 	
 	XMLsave::saveClientRepository(*client_repository, clientf);
