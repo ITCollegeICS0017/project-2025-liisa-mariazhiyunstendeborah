@@ -1,9 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<photoreports>
-	<photoreport reportid=0 creatorid=0 date_created=>
-		<consumed_materials>
-			<material> <\material>	
-			<material> <\material>	
-		<\consumed_materials>
-	<\photoreport>
-<\photoreports>
+<reports/>

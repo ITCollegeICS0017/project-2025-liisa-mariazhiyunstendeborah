@@ -4,6 +4,10 @@
 #include "tinyxml2.h"
 #include "repos/clientrepository.h"
 #include "repos/employeerepository.h"
+#include "core/employee.h"
+#include "employees/administrator.h"
+#include "employees/photographer.h"
+#include "employees/receptionist.h"
 #include "repos/orderrepository.h"
 #include "repos/reportrepository.h"
 #include "repos/materialrepository.h"
@@ -14,31 +18,22 @@
 #include <string>
 
 namespace XMLpopulate {
-	const char *clientf = "xmldocs/clients.xml";
-	const char *matf = "xmldocs/materials.xml";
-	const char *adminf = "xmldocs/administrators.xml"
-	const char *photogrf = "xmldocs/photographers.xml";
-	const char *receptistf = "xmldocs/receptionists.xml";
-	const char *orderf = "xmldocs/orders.xml";
-	const char *recrepf = "xmldocs/receptreports.xml";
-	const char *phorepf = "xmldocs/photoreports.xml";
-
 //populationfuncs:
-	void populateClientRepository(ClientRepository &client_repo);
+	void populateClientRepository(ClientRepository &client_repo, const char* filepath);
 
-	void populateMaterialRepository(MaterialRepository &mat_repo);
+	void populateMaterialRepository(MaterialRepository &mat_repo, const char* filepath);
 
-	void XMLpopulate::populateAdministratorRepository(EmployeeRepository &empl_repo)
+	void populateAdministratorRepository(EmployeeRepository &empl_repo, OrderRepository &order_repo, MaterialRepository &mat_repo, ReceptReportRepository &receptreport_repo, PhotoReportRepository &photoreport_repo, const char* filepath);
 
-	void populatePhotographerRepository(EmployeeRepository &empl_repo);
+	void populatePhotographerRepository(EmployeeRepository &empl_repo, OrderRepository &order_repo, MaterialRepository &mat_repo, PhotoReportRepository &photoreport_repo, SystemClock cclock, const char* filepath);
 
-	void populateReceptionistRepository(EmployeeRepository &empl_repo);
+	void populateReceptionistRepository(EmployeeRepository &empl_repo, OrderRepository &order_repo, MaterialRepository &mat_repo, ReceptReportRepository &receptreport_repo, SystemClock cclock, const char* filepath);
 
-	void populateOrderRepository(OrderRepository &order_repo, ClientRepository &client_repo);
+	void populateOrderRepository(OrderRepository &order_repo, ClientRepository &client_repo, const char* filepath);
 
-	void populateReceptReportRepository(ReceptReportRepository &receptreport_repo);
+	void populateReceptReportRepository(ReceptReportRepository &receptreport_repo, OrderRepository &order_repo, const char* filepath);
 
-	void populatePhotoReportRepository(PhotoReportRepository &photoreport_repo);
+	void populatePhotoReportRepository(PhotoReportRepository &photoreport_repo, OrderRepository &order_repo, const char* filepath);
 
 }
 

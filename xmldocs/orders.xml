@@ -1,10 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<orders>
-	<order orderid=0 date_created= clientid=0>
-		<service> <\service>
-		<in_x_days> <\in_x_days>
-		<compl_status> <\compl_status>
-		<price> <\price>
-		<assigned_emp_id> <\assigned_emp_id>
-	<\order>
-<\orders>
+<orders/>

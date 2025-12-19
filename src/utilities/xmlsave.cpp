@@ -1,21 +1,24 @@
 #include "utilities/xmlsave.h"
 using namespace tinyxml2;
 
-extern OrderRepository order_repository;
-extern MaterialRepository material_repository;
-extern PhotoReportRepository photoreport_repository;
-extern ReceptReportRepository receptreport_repository;
-extern Clock clock;
+ClientRepository client_repo;
+MaterialRepository mat_repo;
+OrderRepository order_repo;
+EmployeeRepository empl_repo;
+PhotoReportRepository photoreport_repo;
+ReceptReportRepository receptreport_repo;
+class SystemClock cclock;
+class Employee;
+class Administrator;
+class Photographer;
+class Receptionist;
 
 //saving funcs
-void XMLsave::saveClientRepository(ClientRepository &client_repo) {
+void XMLsave::saveClientRepository(ClientRepository &client_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(clientf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
 
-	XMLElement *pClients = doc.RootElement();	
+	XMLElement *pClients = doc.NewElement("clients");	
+	doc.InsertFirstChild(pClients);
 
 	for (auto const& [client_id, client] : client_repo.getClients()) {
 		XMLElement *pClient = doc.NewElement("client");
@@ -26,27 +29,24 @@ void XMLsave::saveClientRepository(ClientRepository &client_repo) {
 
 		XMLElement *pElement = doc.NewElement("client_name");
 
-		pElement-> SetText(client->client_name);
+		pElement-> SetText(client->client_name.c_str());
 
 		pClient->InsertEndChild(pElement);
 	}
 
-	doc.SaveFile(clientf);
+	doc.SaveFile(filepath);
 }
 
-void XMLsave::saveMaterialRepository(MaterialRepository &mat_repo) {
+void XMLsave::saveMaterialRepository(MaterialRepository &mat_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(matf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
-	
-	XMLElement *pMats = doc.RootElement();
+
+	XMLElement *pMats = doc.NewElement("materials");	
+	doc.InsertFirstChild(pMats);
 
 	for (auto const& mat : mat_repo.getMaterials()) {
 		XMLElement *pMat = doc.NewElement("material");
 
-		pMat->SetAttribute ("mat_type", mat->mat_type);
+		pMat->SetAttribute ("mat_type", mat->mat_type.c_str());
 
 		pMats->InsertEndChild(pMat);
 
@@ -56,112 +56,114 @@ void XMLsave::saveMaterialRepository(MaterialRepository &mat_repo) {
 		pMat-> InsertEndChild(pElement);
 	}
 
-	doc.SaveFile(matf);
+	doc.SaveFile(filepath);
 }
 
-void XMLsave::saveAdministratorRepository(EmployeeRepository &empl_repo) {
+void XMLsave::saveAdministratorRepository(EmployeeRepository &empl_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(adminf);
-	if (err != XML_SUCCESS) {
-		return;
+
+	XMLElement *pAdmins = doc.NewElement("administrators");	
+	doc.InsertFirstChild(pAdmins);
+
+	auto emps = empl_repo.getEmpofType("Administrator");
+
+
+	for (auto const& [emp_id, emp] : emps) {
+		auto admin = std::dynamic_pointer_cast<Administrator>(emp);
+		if (!admin) {
+			continue;
+		}
+		XMLElement *pAdmin = doc.NewElement("administrator");
+
+		pAdmin->SetAttribute ("emp_id", emp_id);
+
+		pAdmins->InsertEndChild(pAdmin);
+
+		XMLElement *pElement = doc.NewElement("emp_name");
+		pElement->SetText(admin->emp_name.c_str());
+
+		pAdmin->InsertEndChild(pElement);
 	}
 
-	XMLElement *pAdmins = doc.RootElement();	
-
-	std::map<int, std::shared_ptr<Administrator>> admins = empl_repo.getEmpofType("Administrator");
-
-	for (auto const& [admin_id, admin] : admins) {
-			XMLElement *pAdmin = doc.NewElement("administrator");
-
-			pAdmin->SetAttribute ("emp_id", admin_id);
-
-			pAdmins->InsertEndChild(pAdmin);
-
-			XMLElement *pElement = doc.NewElement("emp_name");
-			pElement->SetText(admin->emp_name);
-
-			pAdmin->InsertEndChild(pElement);
-	}
-
-	doc.SaveFile(adminf);
+	doc.SaveFile(filepath);
 }
 
 
-void XMLsave::savePhotographerRepository(EmployeeRepository &empl_repo) {
+void XMLsave::savePhotographerRepository(EmployeeRepository &empl_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(photogrf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
-	
-	XMLElement *pPhtgrs = doc.RootElement();
 
-	std::map<int, std::shared_ptr<Photographer>> photographers = empl_repo.getEmpofType("Photographer");
+	XMLElement *pPhtgrs = doc.NewElement("photographers");	
+	doc.InsertFirstChild(pPhtgrs);
 
-	for (auto const& [photographer_id, photographer] : photographers) {
+	auto emps = empl_repo.getEmpofType("Photographer");
+	for (auto const& [emp_id, emp] : emps) {
+		auto photographer = std::dynamic_pointer_cast<Photographer>(emp);
+		if (!photographer) {
+			continue;
+		}
+
 		XMLElement *pPhtgr = doc.NewElement("photographer");
 
-		pPhtgr->SetAttribute ("emp_id", photographer_id);
+		pPhtgr->SetAttribute ("emp_id", emp_id);
 
 		pPhtgrs->InsertEndChild(pPhtgr);
 
 		XMLElement *pElement = doc.NewElement("emp_name");
-		pElement->SetText(photographer->emp_name);
+		pElement->SetText(photographer->emp_name.c_str());
 
 		pPhtgr->InsertEndChild(pElement);
 
 		XMLElement *pConsMats = doc.NewElement("consumed_materials");
 		pPhtgr->InsertEndChild(pConsMats);
 
-		for (auto const& material : photographer->consumed_materials->materials) {
+		for (auto const& [material, stock_qty] : photographer->getConsumedMaterials()) {
 			XMLElement *pSubEle = doc.NewElement("material");
 
-			pSubEle->SetAttribute ("mat_type", material->mat_type);
+			pSubEle->SetAttribute ("mat_type", material->mat_type.c_str());
 
-			pSubEle->SetText(material->stock_qty);	
+			pSubEle->SetText(stock_qty);	
 
 			pConsMats->InsertEndChild(pSubEle);
 		}	
 	}
 
-	doc.SaveFile(photogrf);
+	doc.SaveFile(filepath);
 }
 
-void XMLsave::saveReceptionistRepository(EmployeeRepository &empl_repo) { 
+void XMLsave::saveReceptionistRepository(EmployeeRepository &empl_repo, const char* filepath) { 
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(receptistf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
-	
-	XMLElement *pRcpts = doc.RootElement();
 
-	std::map<int, std::shared_ptr<Receptionist>> receptionists = empl_repo.getEmpofType("Receptionist");
+	XMLElement *pRcpts = doc.NewElement("receptionists");	
+	doc.InsertFirstChild(pRcpts);
 
-	for (auto const& [rcpt_id, rcpt] : receptionists) {
+	auto emps = empl_repo.getEmpofType("Receptionist");
+
+
+	for (auto const& [emp_id, emp] : emps) {
+		auto receptionist = std::dynamic_pointer_cast<Receptionist>(emp);
+		if (!receptionist) {
+			continue;
+		}
 		XMLElement *pRcpt = doc.NewElement("receptionist");
 
-		pRcpt->SetAttribute("emp_id", rcpt_id);
+		pRcpt->SetAttribute("emp_id", emp_id);
 
 		pRcpts->InsertEndChild(pRcpt);
 
 		XMLElement *pElement = doc.NewElement("emp_name");
-		pElement->SetText(rcpt->emp_name);
+		pElement->SetText(receptionist->emp_name.c_str());
 
 		pRcpt->InsertEndChild(pElement);
 	}
 
-	doc.SaveFile(receptistf);
+	doc.SaveFile(filepath);
 }
 
-void XMLsave::saveOrderRepository(OrderRepository &order_repo) {
+void XMLsave::saveOrderRepository(OrderRepository &order_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(orderf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
-	
-	XMLElement *pOrders = doc.RootElement();
+
+	XMLElement *pOrders = doc.NewElement("orders");	
+	doc.InsertFirstChild(pOrders);
 
 	for (auto const& [oid, order] : order_repo.getOrders()) {
 		XMLElement *pOrder = doc.NewElement("order");
@@ -171,59 +173,56 @@ void XMLsave::saveOrderRepository(OrderRepository &order_repo) {
 		pOrders->InsertEndChild(pOrder);
 
 		XMLElement *pElement = doc.NewElement("date_created");
-		pElement->SetText(DatetoString(order->date_created));
+		pElement->SetText(CustomFuncs::DatetoString(order->date_created).c_str());
 
 		pOrder->InsertEndChild(pElement);
 
-		XMLElement *pElement = doc.NewElement("client_id");
+		pElement = doc.NewElement("client_id");
 		pElement->SetText(order->client->client_id);
 
 		pOrder->InsertEndChild(pElement);
 
-		XMLElement *pElement = doc.NewElement("service");
+		pElement = doc.NewElement("service");
 		pElement->SetText(static_cast<int>(order->service));
 
 		pOrder->InsertEndChild(pElement);
 
 
-		XMLElement *pElement = doc.NewElement("in_x_days");
+		pElement = doc.NewElement("in_x_days");
 		pElement->SetText(order->in_x_days);
 
 		pOrder->InsertEndChild(pElement);
 
-		XMLElement *pElement = doc.NewElement("compl_status");
+		pElement = doc.NewElement("compl_status");
 		pElement->SetText(static_cast<int>(order->compl_status));
 
 		pOrder->InsertEndChild(pElement);
 
-		XMLElement *pElement = doc.NewElement("price");
+		pElement = doc.NewElement("price");
 		pElement->SetText(order->price);
 
 		pOrder->InsertEndChild(pElement);
 
-		XMLElement *pElement = doc.NewElement("assigned_emp_id");
+		pElement = doc.NewElement("assigned_emp_id");
 		pElement->SetText(order->assigned_emp_id);
 
 		pOrder->InsertEndChild(pElement);
 	}
 
-	doc.SaveFile(orderf);
+	doc.SaveFile(filepath);
 }
 
-void XMLsave::saveReceptReportRepository(ReceptReportRepository &receptreport_repo) {
+void XMLsave::saveReceptReportRepository(ReceptReportRepository &receptreport_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(recrepf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
-	
-	XMLElement *eRprts = doc.RootElement();
+
+	XMLElement *eRprts = doc.NewElement("reports");	
+	doc.InsertFirstChild(eRprts);
 
 	for (auto const& [reportid, report] : receptreport_repo.reports) {
 		XMLElement *eRprt = doc.NewElement("receptreport");
 		eRprt->SetAttribute("reportid", reportid);
 		eRprt->SetAttribute("creator_id", report->creator_id);
-		eRprt->SetAttribute("date_created", CustomFuncs::DatetoString(report->date_created));
+		eRprt->SetAttribute("date_created", CustomFuncs::DatetoString(report->date_created).c_str());
 
 		eRprts->InsertEndChild(eRprt);
 
@@ -232,7 +231,7 @@ void XMLsave::saveReceptReportRepository(ReceptReportRepository &receptreport_re
 
 		eRprt->InsertEndChild(pElement);
 
-		XMLElement *pElement = doc.NewElement("compl_orders");
+		pElement = doc.NewElement("compl_orders");
 
 		for (const auto& [orderid, order] : report->compl_orders) {
 			XMLElement *pSubEle = doc.NewElement("order");
@@ -244,23 +243,20 @@ void XMLsave::saveReceptReportRepository(ReceptReportRepository &receptreport_re
 		eRprt->InsertEndChild(pElement);
 	}
 
-	doc.SaveFile(recrepf);
+	doc.SaveFile(filepath);
 }
 
-void XMLsave::savePhotoReportRepository(PhotoReportRepository &photoreport_repo) { 
+void XMLsave::savePhotoReportRepository(PhotoReportRepository &photoreport_repo, const char* filepath) { 
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(phorepf);
-	if (err != XML_SUCCESS) {
-		return;
-	}
-	
-	XMLElement *eRprts = doc.RootElement();
+
+	XMLElement *eRprts = doc.NewElement("reports");	
+	doc.InsertFirstChild(eRprts);
 
 	for (auto const& [reportid, report] : photoreport_repo.reports) {
 		XMLElement *eRprt = doc.NewElement("photoreport");
 		eRprt->SetAttribute("reportid", reportid);
 		eRprt->SetAttribute("creator_id", report->creator_id);
-		eRprt->SetAttribute("date_created", CustomFuncs::DatetoString(report->date_created));
+		eRprt->SetAttribute("date_created", CustomFuncs::DatetoString(report->date_created).c_str());
 
 		eRprts->InsertEndChild(eRprt);
 
@@ -268,7 +264,7 @@ void XMLsave::savePhotoReportRepository(PhotoReportRepository &photoreport_repo)
 
 		for (const auto& [material, stock_qty] : report->consumed_materials) {
 			XMLElement *pSubEle = doc.NewElement("material");
-			pSubEle->SetAttribute("mat_type", material->mat_type);
+			pSubEle->SetAttribute("mat_type", material->mat_type.c_str());
 			pSubEle->SetText(material->stock_qty);
 
 			pElement->InsertEndChild(pSubEle);
@@ -277,5 +273,5 @@ void XMLsave::savePhotoReportRepository(PhotoReportRepository &photoreport_repo)
 		eRprt->InsertEndChild(pElement);
 	}
 
-	doc.SaveFile(phorepf);
+	doc.SaveFile(filepath);
 }

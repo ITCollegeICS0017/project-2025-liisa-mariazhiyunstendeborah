@@ -4,41 +4,40 @@
 #include "tinyxml2.h"
 #include "repos/clientrepository.h"
 #include "repos/employeerepository.h"
+#include "core/employee.h"
+#include "employees/administrator.h"
+#include "employees/photographer.h"
+#include "employees/receptionist.h"
 #include "repos/orderrepository.h"
 #include "repos/reportrepository.h"
 #include "repos/materialrepository.h"
 #include "utilities/miscfunctions.h"
 
+#include <fstream>
+#include <ios>
 #include <vector>
 #include <memory>
 #include <string>
 
 namespace XMLsave {
-	const char *clientf = "xmldocs/clients.xml";
-	const char *matf = "xmldocs/materials.xml";
-	const char *adminf = "xmldocs/administrators.xml"
-	const char *photogrf = "xmldocs/photographers.xml";
-	const char *receptistf = "xmldocs/receptionists.xml";
-	const char *orderf = "xmldocs/orders.xml";
-	const char *recrepf = "xmldocs/receptreports.xml";
-	const char *phorepf = "xmldocs/photoreports.xml";
+
 
 //saving funcs
-	void saveClientRepository(ClientRepository &client_repo);
+	void saveClientRepository(ClientRepository &client_repo, const char* file);
 
-	void saveMaterialRepository(MaterialRepository &mat_repo);
+	void saveMaterialRepository(MaterialRepository &mat_repo, const char* file);
 
-	void saveAdministratorRepository(EmployeeRepository &empl_repo);
+	void saveAdministratorRepository(EmployeeRepository &empl_repo, const char* file);
 
-	void savePhotographerRepository(EmployeeRepository &empl_repo);
+	void savePhotographerRepository(EmployeeRepository &empl_repo, const char* file);
 
-	void saveReceptionistRepository(EmployeeRepository &empl_repo);
+	void saveReceptionistRepository(EmployeeRepository &empl_repo, const char* file);
 
-	void saveOrderRepository(OrderRepository &order_repo);
+	void saveOrderRepository(OrderRepository &order_repo, const char* file);
 
-	void saveReceptReportRepository(ReceptReportRepository &receptreport_repo);
+	void saveReceptReportRepository(ReceptReportRepository &receptreport_repo, const char* file);
 
-	void savePhotoReportRepository(PhotoReportRepository &photoreport_repo);
+	void savePhotoReportRepository(PhotoReportRepository &photoreport_repo, const char* file);
 }
 
 #endif

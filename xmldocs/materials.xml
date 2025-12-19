@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <materials>
-	<material mat_type="">
-		<stock_qty> <\stock_qty>
-	<\material>
-<\materials>
+    <material mat_type="paper">
+        <stock_qty>20</stock_qty>
+    </material>
+    <material mat_type="film">
+        <stock_qty>10</stock_qty>
+    </material>
+    <material mat_type="food">
+        <stock_qty>10</stock_qty>
+    </material>
+</materials>

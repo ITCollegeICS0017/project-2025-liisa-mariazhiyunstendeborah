@@ -1,16 +1,11 @@
 #include "utilities/xmlpopulate.h"
 using namespace tinyxml2;
 
-extern OrderRepository order_repository;
-extern MaterialRepository material_repository;
-extern PhotoReportRepository photoreport_repository;
-extern ReceptReportRepository receptreport_repository;
-extern Clock clock;
 
 //populationfuncs:
-void XMLpopulate::populateClientRepository(ClientRepository &client_repo) { 
+void XMLpopulate::populateClientRepository(ClientRepository &client_repo, const char* filepath) { 
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(clientf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -37,9 +32,9 @@ void XMLpopulate::populateClientRepository(ClientRepository &client_repo) {
 	}	
 }
 
-void XMLpopulate::populateMaterialRepository(MaterialRepository &mat_repo) {	
+void XMLpopulate::populateMaterialRepository(MaterialRepository &mat_repo, const char* filepath) {	
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(matf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -72,9 +67,9 @@ void XMLpopulate::populateMaterialRepository(MaterialRepository &mat_repo) {
 	}	 
 }
 
-void XMLpopulate::populateAdministratorRepository(EmployeeRepository &empl_repo) {
+void XMLpopulate::populateAdministratorRepository(EmployeeRepository &empl_repo, OrderRepository &order_repo, MaterialRepository &mat_repo, ReceptReportRepository &receptreport_repo, PhotoReportRepository &photoreport_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(adminf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -95,7 +90,7 @@ void XMLpopulate::populateAdministratorRepository(EmployeeRepository &empl_repo)
 		XMLElement *pENameEle = pAdmin->FirstChildElement("emp_name");
 		emp_name = pENameEle ? pENameEle->GetText() : "";
 
-		auto admin = std::make_shared<Administrator>(order_repo, emp_id, emp_name, mat_repo, receptreport_repo, photoreport_repo);
+		auto admin = std::make_shared<Administrator>(&order_repo, emp_id, emp_name, &mat_repo, &receptreport_repo, &photoreport_repo);
 
 		empl_repo.addExistingEmployee(admin);
 
@@ -104,9 +99,9 @@ void XMLpopulate::populateAdministratorRepository(EmployeeRepository &empl_repo)
 
 }
 
-void XMLpopulate::populatePhotographerRepository(EmployeeRepository &empl_repo) { 	
+void XMLpopulate::populatePhotographerRepository(EmployeeRepository &empl_repo, OrderRepository &order_repo, MaterialRepository &mat_repo, PhotoReportRepository &photoreport_repo, SystemClock cclock, const char* filepath) { 	
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(photogrf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -122,7 +117,6 @@ void XMLpopulate::populatePhotographerRepository(EmployeeRepository &empl_repo) 
 	std::string emp_name;
 	std::string mat_type;
 	int stock_qty;
-	MaterialRepository *consumed_materials;
 
 	while (pPhotographer) {
 		pPhotographer->QueryIntAttribute("emp_id", &emp_id);
@@ -130,7 +124,7 @@ void XMLpopulate::populatePhotographerRepository(EmployeeRepository &empl_repo) 
 		XMLElement *pENameEle = pPhotographer->FirstChildElement("emp_name");
 		emp_name = pENameEle ? pENameEle->GetText() : "";
 
-		auto photographer = std::make_shared<Photographer>(order_repository, emp_id, emp_name, clock, material_repository, photoreport_repository);
+		auto photographer = std::make_shared<Photographer>(&order_repo, emp_id, emp_name, &cclock, &mat_repo, &photoreport_repo);
 
 		XMLElement *pMatsEle = pPhotographer->FirstChildElement("consumed_materials");
 		if (!pMatsEle) {
@@ -157,9 +151,9 @@ void XMLpopulate::populatePhotographerRepository(EmployeeRepository &empl_repo) 
 	}
 }
 
-void XMLpopulate::populateReceptionistRepository(EmployeeRepository &empl_repo) {
+void XMLpopulate::populateReceptionistRepository(EmployeeRepository &empl_repo, OrderRepository &order_repo, MaterialRepository &mat_repo, ReceptReportRepository &receptreport_repo, SystemClock cclock, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(receptistf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -180,9 +174,7 @@ void XMLpopulate::populateReceptionistRepository(EmployeeRepository &empl_repo) 
 		XMLElement *pENameEle = pReceptionist->FirstChildElement("emp_name");
 		emp_name = pENameEle ? pENameEle->GetText() : "";
 
-		//order_repository, emp_id, emp_name), clock(clock), receptreport_repository(receptreport_repository
-
-		auto receptionist = std::make_shared<Receptionist>(order_repository, emp_id, emp_name, clock, receptreport_repository);
+		auto receptionist = std::make_shared<Receptionist>(&order_repo, emp_id, emp_name, &cclock, &receptreport_repo);
 
 		empl_repo.addExistingEmployee(receptionist);
 
@@ -190,9 +182,9 @@ void XMLpopulate::populateReceptionistRepository(EmployeeRepository &empl_repo) 
 	}
 }
 
-void XMLpopulate::populateOrderRepository(OrderRepository &order_repo, ClientRepository &client_repo) { 
+void XMLpopulate::populateOrderRepository(OrderRepository &order_repo, ClientRepository &client_repo, const char* filepath) { 
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(orderf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -230,7 +222,8 @@ void XMLpopulate::populateOrderRepository(OrderRepository &order_repo, ClientRep
 			continue;
 		}
 
-		auto client = client_repo.findClient(client_id);
+		auto client = Client(client_repo.findClient(client_id)->client_id, client_repo.findClient(client_id)->client_name);
+		auto pClient = std::make_shared<Client>(client);
 
 		XMLElement *pOEle = pOrder->FirstChildElement("service");
 		pOEle->QueryIntText(&tempint);
@@ -255,7 +248,7 @@ void XMLpopulate::populateOrderRepository(OrderRepository &order_repo, ClientRep
 		pOEle = pOrder->FirstChildElement("assigned_emp_id");
 		pOEle->QueryIntText(&assigned_emp_id);
 
-		auto order = std::make_shared<Order>(client, service, in_x_days, date_created, orderid, compl_status, price, assigned_emp_id);
+		auto order = std::make_shared<Order>(pClient, service, in_x_days, date_created, orderid, compl_status, price, assigned_emp_id);
 
 		order_repo.addOrder(order);
 
@@ -263,9 +256,9 @@ void XMLpopulate::populateOrderRepository(OrderRepository &order_repo, ClientRep
 	}
 }
 
-void XMLpopulate::populateReceptReportRepository(ReceptReportRepository &receptreport_repo) {
+void XMLpopulate::populateReceptReportRepository(ReceptReportRepository &receptreport_repo, OrderRepository &order_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(recrepf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -309,7 +302,7 @@ void XMLpopulate::populateReceptReportRepository(ReceptReportRepository &receptr
 
 			auto order = order_repo.findOrder(orderid);
 
-			report->compl_orders.insert({orderid, order});
+			report->compl_orders.emplace(orderid, order);
 
 			pCompOrder = pCompOrder->NextSiblingElement("order");
 		}
@@ -320,9 +313,9 @@ void XMLpopulate::populateReceptReportRepository(ReceptReportRepository &receptr
 	}
 }
 
-void XMLpopulate::populatePhotoReportRepository(PhotoReportRepository &photoreport_repo) {
+void XMLpopulate::populatePhotoReportRepository(PhotoReportRepository &photoreport_repo, OrderRepository &order_repo, const char* filepath) {
 	XMLDocument doc;
-	XMLError err = doc.LoadFile(phorepf);
+	XMLError err = doc.LoadFile(filepath);
 	if (err != XML_SUCCESS) {
 		return;
 	}
@@ -364,7 +357,7 @@ void XMLpopulate::populatePhotoReportRepository(PhotoReportRepository &photorepo
 
 			auto material = std::make_shared<Material>(mat_type, stock_qty);
 
-			report->consumed_materials.insert({material, stock_qty});
+			report->consumed_materials.emplace(material, stock_qty);
 
 			pMat = pMat->NextSiblingElement("material");
 		}
