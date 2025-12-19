@@ -11,6 +11,7 @@
 #include "employees/photographer.h"
 #include "employees/receptionist.h"
 #include "employees/administrator.h"
+#include "utilities/xmlsave.h"
 
 #include <format>
 #include <functional>

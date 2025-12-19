@@ -301,6 +301,26 @@ void ViewManager::viewMain(){
         return 1; });
     //  parser.listCommands();
     parser.loopCommands();
+    
+    //
+    const char *clientf = "xmldocs/clients.xml";
+	const char *matf = "xmldocs/materials.xml";
+	const char *adminf = "xmldocs/administrators.xml";
+	const char *photogrf = "xmldocs/photographers.xml";
+	const char *receptistf = "xmldocs/receptionists.xml";
+	const char *orderf = "xmldocs/orders.xml";
+	const char *recrepf = "xmldocs/receptreports.xml";
+	const char *phorepf = "xmldocs/photoreports.xml";
+
+    //save repository data
+    XMLsave::saveOrderRepository(*(this->ui_manager->order_repository), orderf);
+    XMLsave::saveClientRepository(*(this->ui_manager->client_repository), clientf);
+    XMLsave::saveMaterialRepository(*(this->ui_manager->material_repository), matf);
+    XMLsave::savePhotoReportRepository(*(this->ui_manager->photoreport_repository), phorepf);
+    XMLsave::saveReceptReportRepository(*(this->ui_manager->receptreport_repository), recrepf);
+    XMLsave::saveAdministratorRepository(*(this->ui_manager->employee_repository), adminf);
+    XMLsave::savePhotographerRepository(*(this->ui_manager->employee_repository), photogrf);
+    XMLsave::saveReceptionistRepository(*(this->ui_manager->employee_repository), receptistf);
     return;
 }
 
