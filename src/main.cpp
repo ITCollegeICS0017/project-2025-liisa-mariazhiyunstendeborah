@@ -15,9 +15,7 @@
 #include "utilities/xmlsave.h"
 
 int main() {
-  // example implementation, create Material, Order, Receptionist, Photographer,
-  // Administrator, assignOrder, switchOrderStatus, consumeMaterial, submit
-  // ReceptReport, submit PhotoReport, listMaterials
+  // example implementation
   	const char *clientf = "xmldocs/clients.xml";
 	const char *matf = "xmldocs/materials.xml";
 	const char *adminf = "xmldocs/administrators.xml";
@@ -38,47 +36,10 @@ int main() {
   ClientRepository* client_repository = new ClientRepository();
 	UImanager* uimanager = new UImanager(order_repository, client_repository, employee_repository, photoreport_repository, receptreport_repository, material_repository);
 	ViewManager* viewmanager = new ViewManager(uimanager);
-  auto material = std::make_shared<Material>("paper");
-  auto material1 = std::make_shared<Material>("film");
-  auto material2 = std::make_shared<Material>("food");
-  auto admin = std::make_shared<Administrator>(
-      order_repository, "Binkle Bonkler", material_repository,
-      receptreport_repository, photoreport_repository);
-  employee_repository->addEmployee(admin);
-  // std::cout << "Made administrator with employee id: " << admin_id << "\n";
 
 
-  admin->addMaterial(material->mat_type, 10);
-  admin->addMaterial(material->mat_type, 10);
-  admin->addMaterial(material1->mat_type, 10);
-  admin->addMaterial(material2->mat_type, 10);
 
-	//admin->addMaterial(material->mat_type, 10);
-	//admin->addMaterial(material->mat_type, 10);
-	//admin->addMaterial(material1->mat_type, 10);
-	//admin->addMaterial(material2->mat_type, 10);
 
-	//auto client = std::make_shared<Client>("Bones Jones");
-	//client_repository->addClient(client);
-
-	//Service service = Photo_printing;
-	//Service service2 = Film_devel;
-	//int in_x_days = 3;
-
-	//auto receptionist = std::make_shared<Receptionist>(
-	//	order_repository, "Schmongler", &clock, receptreport_repository);
-	//employee_repository->addEmployee(receptionist);
-
-	//receptionist->makeOrder(client, service, in_x_days);
-	//receptionist->makeOrder(client, service2, 1);
-
-  auto receptionist = std::make_shared<Receptionist>(
-      order_repository, "Schmongler", clock, receptreport_repository);
-  employee_repository->addEmployee(receptionist);
-  // std::cout << "Made receptionist with employee id: " << receptionist_id <<
-  // "\n";
-
-	//receptionist->submitReport();
 
 
 	
@@ -118,5 +79,5 @@ int main() {
 
 
   std::cout << "Example data initialized";
-  uimanager->view_main();
+	viewmanager->viewMain();
 }
