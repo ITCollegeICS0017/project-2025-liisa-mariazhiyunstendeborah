@@ -59,23 +59,6 @@ int main() {
 
 	XMLpopulate::populatePhotoReportRepository(*photoreport_repository, *order_repository, phorepf);
 
-	
-	XMLsave::saveClientRepository(*client_repository, clientf);
-
-	XMLsave::saveMaterialRepository(*material_repository, matf);
-
-	XMLsave::saveAdministratorRepository(*employee_repository, adminf);
-
-	XMLsave::savePhotographerRepository(*employee_repository, photogrf);
-
-	XMLsave::saveReceptionistRepository(*employee_repository, receptistf);
-
-	XMLsave::saveOrderRepository(*order_repository, orderf);
-
-	XMLsave::saveReceptReportRepository(*receptreport_repository, recrepf);
-
-	XMLsave::savePhotoReportRepository(*photoreport_repository, phorepf);
-
 
 
   std::cout << "Example data initialized";
