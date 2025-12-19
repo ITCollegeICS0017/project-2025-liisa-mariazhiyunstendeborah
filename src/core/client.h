@@ -12,6 +12,9 @@ class Client {
 
         Client(std::string client_name) : client_name(client_name) { }
 
+        //Used only during XML reading
+        Client(int client_id, std::string client_name) : client_id(client_id), client_name(client_name) { }
+
         virtual ~Client() = default;
 };
 

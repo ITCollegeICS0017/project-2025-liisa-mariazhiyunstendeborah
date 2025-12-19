@@ -28,6 +28,17 @@ int ClientRepository::addClient(std::shared_ptr<Client> client) {
   }
 }
 
+void ClientRepository::addExistingClient(std::shared_ptr<Client> client) {
+  if (!findClient(client->client_id)) {
+    if (client->client_id > next_id) {
+      next_id = client->client_id + 1;
+    }
+    clients.insert({client->client_id, client});
+  } else {
+    throw DuplicateObjectException(std::to_string(client->client_id));
+  }
+}
+
 void ClientRepository::editClient(int client_id,
                                   std::shared_ptr<Client> updated_client) {
   if (!findClient(client_id)) {

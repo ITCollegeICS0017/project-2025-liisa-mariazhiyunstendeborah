@@ -20,6 +20,8 @@ class ClientRepository : public IClientRepository{
 
         int addClient(std::shared_ptr<Client> client);
 
+        void addExistingClient(std::shared_ptr<Client> client);
+
         void editClient(int client_id, std::shared_ptr<Client> updated_client);
 
         void deleteClient(int client_id);

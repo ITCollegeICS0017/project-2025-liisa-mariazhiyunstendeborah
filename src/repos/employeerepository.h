@@ -16,9 +16,13 @@ class EmployeeRepository : public IEmployeeRepository {
     public:
         const std::map<int, std::shared_ptr<Employee>>& getEmployees() const;
 
+        std::map<int, std::shared_ptr<Employee>> getEmpofType(std::string emp_type) const;
+
         Employee* findEmployee(int emp_id);
 
         int addEmployee(std::shared_ptr<Employee> employee);
+
+        void addExistingEmployee(std::shared_ptr<Employee> employee);
 
         void editEmployee(int emp_id, std::shared_ptr<Employee> updated_employee);
 

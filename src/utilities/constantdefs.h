@@ -9,6 +9,7 @@ enum Service
 {
 Photo_printing,
 Film_devel,
+Invalid_Service,
 };
 
 enum CompletionStatus
@@ -17,6 +18,7 @@ Created,
 Assigned,
 InProgress,
 Completed,
+Invalid_Status,
 };
 
 #endif
